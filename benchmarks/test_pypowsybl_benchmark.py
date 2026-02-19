@@ -1,0 +1,157 @@
+"""
+Benchmark for pypowsybl library - Power system network modeling and analysis.
+
+Tests loading performance using the Svedala IGM dataset (7.3MB total) with CommonData.
+"""
+
+import os
+import psutil
+import pytest
+import tempfile
+import zipfile
+from pathlib import Path
+
+# Import pypowsybl
+try:
+    import pypowsybl.network as pn
+except ImportError:
+    pytest.skip("pypowsybl not available", allow_module_level=True)
+
+
+@pytest.fixture(scope="module")
+def svedala_zip_path():
+    """Create a ZIP file with Svedala IGM dataset + CommonData for pypowsybl."""
+    base_path = Path(__file__).parent.parent / "data" / "relicapgrid" / "Instance" / "Grid"
+    svedala_path = base_path / "IGM_Svedala"
+    common_path = base_path / "CommonAndBoundaryData"
+
+    # Get all required files
+    files = list(svedala_path.glob("*.xml")) + [common_path / "CommonData_and_Boundary_merged.xml"]
+
+    # Check if files exist
+    for f in files:
+        if not f.exists():
+            pytest.skip(f"Test data not available: {f}")
+
+    # Create temporary ZIP file
+    tmp_zip = tempfile.NamedTemporaryFile(suffix=".zip", delete=False)
+    with zipfile.ZipFile(tmp_zip.name, "w") as zf:
+        for f in files:
+            zf.write(f, arcname=f.name)
+
+    total_size_mb = sum(f.stat().st_size for f in files) / 1024 / 1024
+
+    yield tmp_zip.name, total_size_mb
+
+    # Cleanup
+    os.unlink(tmp_zip.name)
+
+
+@pytest.fixture(scope="module")
+def memory_baseline():
+    """Get baseline memory usage."""
+    process = psutil.Process()
+    return process.memory_info().rss / 1024 / 1024  # MB
+
+
+def get_memory_mb():
+    """Get current memory usage in MB."""
+    process = psutil.Process()
+    return process.memory_info().rss / 1024 / 1024
+
+
+def test_pypowsybl_load_network(benchmark, svedala_zip_path, memory_baseline):
+    """Benchmark loading complete CGMES network."""
+    zip_path, total_size_mb = svedala_zip_path
+
+    def load_network():
+        network = pn.load(zip_path)
+        return network
+
+    # Run benchmark
+    network = benchmark(load_network)
+
+    # Collect metrics
+    memory_used = get_memory_mb() - memory_baseline
+
+    # Get network statistics
+    bus_count = len(network.get_buses())
+    line_count = len(network.get_lines())
+    generator_count = len(network.get_generators())
+    load_count = len(network.get_loads())
+    substation_count = len(network.get_substations())
+
+    # Report metrics
+    benchmark.extra_info["memory_mb"] = f"{memory_used:.1f}"
+    benchmark.extra_info["total_size_mb"] = f"{total_size_mb:.1f}"
+    benchmark.extra_info["buses"] = bus_count
+    benchmark.extra_info["lines"] = line_count
+    benchmark.extra_info["generators"] = generator_count
+    benchmark.extra_info["loads"] = load_count
+    benchmark.extra_info["substations"] = substation_count
+
+    assert network is not None
+    assert bus_count > 0
+
+
+def test_pypowsybl_get_lines(benchmark, svedala_zip_path):
+    """Benchmark retrieving line data from loaded network."""
+
+    zip_path, _ = svedala_zip_path
+
+    # Load network first (not benchmarked)
+    network = pn.load(zip_path)
+
+    def get_lines():
+        lines_df = network.get_lines()
+        return lines_df
+
+    # Benchmark the query
+    lines = benchmark(get_lines)
+
+    benchmark.extra_info["line_count"] = len(lines)
+    benchmark.extra_info["query_type"] = "get_lines"
+
+    assert len(lines) > 0
+
+
+def test_pypowsybl_get_generators(benchmark, svedala_zip_path):
+    """Benchmark retrieving generator data from loaded network."""
+
+    zip_path, _ = svedala_zip_path
+
+    # Load network first (not benchmarked)
+    network = pn.load(zip_path)
+
+    def get_generators():
+        gens_df = network.get_generators()
+        return gens_df
+
+    # Benchmark the query
+    generators = benchmark(get_generators)
+
+    benchmark.extra_info["generator_count"] = len(generators)
+    benchmark.extra_info["query_type"] = "get_generators"
+
+    assert len(generators) > 0
+
+
+def test_pypowsybl_get_buses(benchmark, svedala_zip_path):
+    """Benchmark retrieving bus data from loaded network."""
+
+    zip_path, _ = svedala_zip_path
+
+    # Load network first (not benchmarked)
+    network = pn.load(zip_path)
+
+    def get_buses():
+        buses_df = network.get_buses()
+        return buses_df
+
+    # Benchmark the query
+    buses = benchmark(get_buses)
+
+    benchmark.extra_info["bus_count"] = len(buses)
+    benchmark.extra_info["query_type"] = "get_buses"
+
+    assert len(buses) > 0
