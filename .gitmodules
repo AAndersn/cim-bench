@@ -1,3 +1,6 @@
 [submodule "data/relicapgrid"]
 	path = data/relicapgrid
 	url = https://github.com/entsoe/relicapgrid
+[submodule "data/triplets"]
+	path = data/triplets
+	url = https://github.com/Haigutus/triplets.git

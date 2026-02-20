@@ -10,3 +10,8 @@ dependencies = [
     "pypowsybl>=1.0.0",
     "psutil>=5.9.0",
 ]
+
+[project.optional-dependencies]
+visualization = [
+    "matplotlib>=3.8.0",
+]

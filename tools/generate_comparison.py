@@ -21,12 +21,21 @@ def format_time(seconds):
         return f"{seconds:.2f} s"
 
 
-def get_library_name(benchmark_data):
-    """Extract library name from benchmark data."""
+def get_library_name(benchmark_data, json_file):
+    """Extract library name and dataset from benchmark data."""
+    # Extract from filename: triplets_svedala_benchmark.json -> (triplets, Svedala)
+    filename = Path(json_file).stem.replace("_benchmark", "")
+    parts = filename.split("_")
+
+    if len(parts) >= 2:
+        library = parts[0]
+        dataset = parts[1].capitalize()
+        return f"{library} ({dataset})"
+
+    # Fallback to old method
     if not benchmark_data["benchmarks"]:
         return "Unknown"
 
-    # Try to get from first benchmark name
     first_name = benchmark_data["benchmarks"][0]["name"]
     if "triplets" in first_name.lower():
         return "triplets"
@@ -35,7 +44,7 @@ def get_library_name(benchmark_data):
     elif "cimpy" in first_name.lower():
         return "cimpy"
     else:
-        return Path(sys.argv[1]).stem.split("_")[0]
+        return parts[0] if parts else "Unknown"
 
 
 def extract_load_benchmark(benchmarks):
@@ -57,7 +66,7 @@ def generate_comparison_report(json_files):
     for json_file in json_files:
         with open(json_file) as f:
             data = json.load(f)
-            lib_name = get_library_name(data)
+            lib_name = get_library_name(data, json_file)
             benchmark_data.append((lib_name, data))
 
     # Environment (use first one)
@@ -95,7 +104,10 @@ def generate_comparison_report(json_files):
             elements_str = ", ".join(elements) if elements else "N/A"
 
             notes = ""
-            if "total_size_mb" in extra:
+            # Prefer dataset_size_mb (for zipped datasets) over total_size_mb
+            if "dataset_size_mb" in extra:
+                notes = f"Dataset: {extra['dataset_size_mb']} MB"
+            elif "total_size_mb" in extra:
                 notes = f"Dataset: {extra['total_size_mb']} MB"
 
             report.append(f"| {lib_name} | {mean_time} | {memory} | {elements_str} | {notes} |")

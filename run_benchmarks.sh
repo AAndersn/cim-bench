@@ -19,8 +19,10 @@ cd "$SCRIPT_DIR"
 # Add new benchmarks here: "test_file:output_name:display_name"
 # ============================================================================
 BENCHMARKS=(
-    "benchmarks/test_triplets_benchmark.py:triplets:Triplets"
-    "benchmarks/test_pypowsybl_benchmark.py:pypowsybl:PyPowSyBl"
+    "benchmarks/triplets_svedala_benchmark.py:triplets_svedala:Triplets-Svedala"
+    "benchmarks/pypowsybl_svedala_benchmark.py:pypowsybl_svedala:PyPowSyBl-Svedala"
+    "benchmarks/triplets_realgrid_benchmark.py:triplets_realgrid:Triplets-RealGrid"
+    "benchmarks/pypowsybl_realgrid_benchmark.py:pypowsybl_realgrid:PyPowSyBl-RealGrid"
 )
 
 RESULTS_DIR="results"
@@ -73,6 +75,15 @@ if [ ${#BENCHMARK_JSONS[@]} -gt 1 ]; then
     echo "📊 Generating comparison summary..."
     python tools/generate_comparison.py "${BENCHMARK_JSONS[@]}" "$RESULTS_DIR/comparison_summary.md"
     echo "   → comparison_summary.md"
+    echo ""
+fi
+
+# Generate visualizations (if matplotlib available)
+if python -c "import matplotlib" 2>/dev/null; then
+    python tools/generate_graphs.py
+else
+    echo "⚠️  Matplotlib not installed - skipping graph generation"
+    echo "   Install with: pip install matplotlib"
     echo ""
 fi
 

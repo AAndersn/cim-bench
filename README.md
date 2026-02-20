@@ -39,6 +39,15 @@ git submodule update --init --recursive
 uv sync
 ```
 
+**Optional: Install visualization dependencies for performance graphs:**
+```bash
+pip install matplotlib
+# or with uv:
+uv pip install matplotlib
+# or install all optional dependencies:
+uv sync --extra visualization
+```
+
 ### Running Benchmarks
 
 **Quick Start - Run all benchmarks and generate reports:**
@@ -56,6 +65,7 @@ This will:
 2. Save JSON results to `results/`
 3. Generate individual markdown reports
 4. Create a comparison summary report
+5. Generate performance visualization graphs (if matplotlib is installed)
 
 **Manual benchmark execution:**
 
@@ -84,14 +94,34 @@ Generate comparison report:
 uv run python tools/generate_comparison.py results/file1.json results/file2.json results/comparison.md
 ```
 
+Generate performance visualization graphs:
+```bash
+uv run python tools/generate_graphs.py
+```
+
+This creates SVG graphs in `results/graphs/`:
+
+**Per-dataset comparisons** (tools compared within each dataset):
+- `svedala_comparison.svg` - Svedala: load time, memory, and query performance
+- `svedala_detailed.svg` - Svedala: detailed metrics with network elements
+- `realgrid_comparison.svg` - RealGrid: load time, memory, and query performance
+- `realgrid_detailed.svg` - RealGrid: detailed metrics with network elements
+
+**Cross-dataset comparisons** (both tools across both datasets):
+- `import_comparison.svg` - Import/load time comparison
+- `memory_comparison.svg` - Memory usage comparison
+- `query_comparison.svg` - Query performance comparison
+
 **Adding new benchmarks to the runner:**
 
 Edit `run_benchmarks.sh` and add to the `BENCHMARKS` array:
 ```bash
 BENCHMARKS=(
-    "benchmarks/test_triplets_benchmark.py:triplets:Triplets"
-    "benchmarks/test_pypowsybl_benchmark.py:pypowsybl:PyPowSyBl"
-    "benchmarks/test_cimpy_benchmark.py:cimpy:CIMpy"  # Add new benchmark here
+    "benchmarks/triplets_svedala_benchmark.py:triplets_svedala:Triplets-Svedala"
+    "benchmarks/pypowsybl_svedala_benchmark.py:pypowsybl_svedala:PyPowSyBl-Svedala"
+    "benchmarks/triplets_realgrid_benchmark.py:triplets_realgrid:Triplets-RealGrid"
+    "benchmarks/pypowsybl_realgrid_benchmark.py:pypowsybl_realgrid:PyPowSyBl-RealGrid"
+    "benchmarks/cimpy_svedala_benchmark.py:cimpy_svedala:CIMpy-Svedala"  # Add new benchmark here
 )
 ```
 
@@ -101,29 +131,70 @@ Latest results on AMD Ryzen AI 9 HX 370, 64GB RAM, Python 3.13.12:
 
 ### Comparison Summary
 
-| Library | Version | Load Time | Memory | Query Speed | Use Case |
-|---------|---------|-----------|--------|-------------|----------|
-| **triplets** | 0.0.17 | 109.0 ms | 22.5 MB | 8.8 ms | RDF data extraction, low memory |
-| **pypowsybl** | 1.14.0 | 443.2 ms | 1320 MB | 151 μs | Power analysis, network model |
+**Small Dataset (Svedala - 7.3 MB):**
 
-### Detailed Results: Svedala IGM Dataset (7.3 MB, CGMES EQ+SSH+SV+TP)
+| Library | Version | Load Time | Memory | Query Speed | Elements |
+|---------|---------|-----------|--------|-------------|----------|
+| **triplets** | 0.0.17 | 122.2 ms | 27.6 MB | 6.1-18.3 ms | 97 lines, 39 gen, 73 loads |
+| **pypowsybl** | 1.14.0 | 479.1 ms | 894.2 MB | 287-319 μs | 97 lines, 39 gen, 73 loads |
+
+**Large Dataset (RealGrid - 86.5 MB):**
+
+| Library | Version | Load Time | Memory | Query Speed | Elements |
+|---------|---------|-----------|--------|-------------|----------|
+| **triplets** | 0.0.17 | 1.32 s | 516.9 MB | 62-190 ms | 7561 lines, 1347 gen, 6687 loads |
+| **pypowsybl** | 1.14.0 | 4.84 s | 3956.0 MB | 4.8-49.9 ms | 7561 lines, 1347 gen, 6687 loads |
+
+**Key Insights:**
+- **Load Time Scaling**: Both libraries scale approximately linearly with dataset size (~11-12x increase for 12x larger dataset)
+- **Memory Scaling**: Triplets: 19x increase; PyPowSyBl: 4.4x increase
+- **Query Performance**: PyPowSyBl maintains sub-millisecond to low-millisecond performance even on large datasets
+- **Use Cases**:
+  - **triplets**: Fast loading, low memory, RDF data extraction, batch processing
+  - **pypowsybl**: Rich network model, fast queries, power flow analysis, TSO applications
+
+### Import Performance Comparison
+
+![Import Performance](results/graphs/import_comparison.svg)
+
+*Cross-dataset comparison showing how both tools scale from small (7.3 MB) to large (86.5 MB) datasets*
+
+### Detailed Results: Svedala IGM Dataset (7.3 MB, CGMES 3.0)
 
 #### triplets - RDF/Pandas Parser
-- **Load Time**: 109.0 ms
-- **Memory**: 22.5 MB
-- **Data Structure**: 94,861 triplets, 14,456 unique objects
+- **Load Time**: 122.2 ms
+- **Memory**: 27.6 MB
+- **Data Structure**: ~95,000 triplets, ~14,500 unique objects
 - **Network Elements**: 97 lines, 39 generators, 73 loads, 56 substations
-- **Query Performance**: 8.8 ms (ACLineSegment type query)
-- **Strengths**: Very fast loading, minimal memory, simple API
-- **Use Case**: Data extraction, batch processing, RDF manipulation
+- **Query Performance**: 6.1-18.3 ms (type-based queries)
+- **Strengths**: Fast loading, minimal memory, simple API, pandas integration
+- **Use Case**: Data extraction, batch processing, RDF manipulation, quick analysis
 
 #### pypowsybl - Power System Network Model
-- **Load Time**: 443.2 ms (4.1x slower than triplets)
-- **Memory**: 1319.5 MB (59x more than triplets)
-- **Network Elements**: 105 buses, 90 lines, 39 generators, 73 loads, 57 substations
-- **Query Performance**: 151-292 μs (30-58x faster than triplets)
-- **Strengths**: Rich network model, sub-millisecond queries, analysis-ready
-- **Use Case**: Power flow analysis, network operations, TSO applications
+- **Load Time**: 479.1 ms (3.9x slower than triplets)
+- **Memory**: 894.2 MB (32x more than triplets)
+- **Network Elements**: 97 lines (90 + 7 dangling), 39 generators, 73 loads, 56 substations
+- **Query Performance**: 287-319 μs (20-60x faster than triplets)
+- **Strengths**: Rich network model, sub-millisecond queries, analysis-ready, includes dangling lines
+- **Use Case**: Power flow analysis, network operations, TSO applications, CGMES validation
+
+### Detailed Results: RealGrid Dataset (86.5 MB, CGMES 2.4.15)
+
+#### triplets - RDF/Pandas Parser
+- **Load Time**: 1.32 s
+- **Memory**: 516.9 MB
+- **Network Elements**: 7561 lines, 1347 generators, 6687 loads (EnergyConsumer), 4875 substations
+- **Query Performance**: 62-190 ms (consistent with small dataset)
+- **Strengths**: Linear scaling, handles large datasets efficiently
+- **Use Case**: Large-scale data processing, European grid analysis
+
+#### pypowsybl - Power System Network Model
+- **Load Time**: 4.84 s (3.7x slower than triplets)
+- **Memory**: 3956.0 MB (7.7x more than triplets)
+- **Network Elements**: 7561 lines, 1347 generators, 6687 loads, 4791 substations
+- **Query Performance**: 4.8-49.9 ms (significantly faster than triplets)
+- **Strengths**: Fast queries even on large datasets, comprehensive network model
+- **Use Case**: Pan-European grid analysis, large TSO networks, production systems
 
 
 See `tools/*/README.md` for detailed per-tool documentation and analysis.
@@ -147,7 +218,6 @@ See `tools/*/README.md` for detailed per-tool documentation and analysis.
 | 📋 | **CIMDraw** | Web/JS | View/edit CGMES node-breaker models | Indirect | ENTSO-E CGMES profile | [danielePala/CIMDraw](https://github.com/danielePala/CIMDraw) | Visual completeness check |
 | 📋 | **GraphDB** | Java | Graph database with RDF support | Excellent | Generic RDF | [Ontotext GraphDB](https://www.ontotext.com/products/graphdb/) | Enterprise SPARQL database |
 | 📋 | **GridCal/VeraGrid** | Python | Power systems analysis with UI | Indirect (grid model) | CGMES import support | [SanPen/GridCal](https://github.com/SanPen/GridCal) | Academia/industry tool, 500+ stars |
-| 📋 | **cim-graph** | Python | CIM graph library | Yes (graph-based) | CIM/CGMES | [PyPI: cim-graph](https://pypi.org/project/cim-graph/) | Alternative graph implementation |
 | 📋 | **CIMbion** | TBD | CIM/CGMES data management | TBD | CGMES | [Veracity Store](https://store.veracity.com/cimbion) | Closed source, commercial |
 | 📋 | **CIMdesk** | Various | CIM data management | TBD | CGMES | TBD | To be investigated |
 
@@ -170,22 +240,51 @@ See `tools/*/README.md` for detailed per-tool documentation and analysis.
 | Dataset | Size | CGMES Version | Network Type | Elements | Status | Purpose |
 |---------|------|---------------|--------------|----------|--------|---------|
 | **Svedala IGM** | 7.3 MB | CGMES 3.0 | Small (Sweden) | 97 lines, 39 gen, 73 loads, 56 subs | ✅ Active | Fast iteration, baseline tests |
+| **RealGrid** | 86.5 MB (3.7 MB compressed) | CGMES 2.4.15 | Large (Pan-European) | 10,000+ elements | ✅ Active | Scalability, real-world TSO scenarios |
 | **NC Profiles** | ~50-100 MB | CGMES 3.0 | Medium (ENTSO-E) | TBD | 📋 Planned | Network Code validation, cross-border |
-| **RealGrid** | ~500+ MB | CGMES 2.4 | Large (Pan-European) | 10,000+ elements | 📋 Planned | Scalability, real-world TSO scenarios |
 
 **Comparison Targets**:
 - **Small (Svedala)**: Fast parsing, edge case testing, CI/CD friendly
 - **Large (RealGrid)**: Memory stress, scalability limits, production-scale performance
 
-### 📈 Planned Visualizations
+### 📈 Performance Visualizations
 
-**Performance Comparison Graphs** (small vs large datasets):
+Performance graphs are automatically generated when running `./run_benchmarks.sh` (requires matplotlib).
 
-**Metrics to visualize**:
-- Load time vs dataset size (scaling curve)
-- Memory usage vs element count
-- Query performance degradation at scale
-- Export fidelity (data loss %) across parsers
+**Visualization Types:**
+
+#### Per-Dataset Comparisons
+Graphs grouped by **dataset** showing tool comparisons side-by-side:
+
+**Svedala Dataset (7.3 MB)**
+- **Comparison**: Load time, memory, and average query performance for both tools
+  - `results/graphs/svedala_comparison.svg`
+- **Detailed**: Load time, memory, lines parsed, generators parsed
+  - `results/graphs/svedala_detailed.svg`
+
+**RealGrid Dataset (86.5 MB)**
+- **Comparison**: Load time, memory, and average query performance for both tools
+  - `results/graphs/realgrid_comparison.svg`
+- **Detailed**: Load time, memory, lines parsed, generators parsed
+  - `results/graphs/realgrid_detailed.svg`
+
+#### Cross-Dataset Comparisons
+Graphs showing both tools across both datasets for each metric:
+
+- **Import Comparison**: Load/import time for both tools on both datasets
+  - `results/graphs/import_comparison.svg`
+- **Memory Comparison**: Memory usage for both tools on both datasets
+  - `results/graphs/memory_comparison.svg`
+- **Query Comparison**: Average query performance for both tools on both datasets
+  - `results/graphs/query_comparison.svg`
+
+**Metrics visualized**:
+- Import/load time (ms)
+- Memory usage (MB)
+- Query performance (ms)
+- Network elements parsed (lines, generators, loads, substations)
+
+*All graphs are generated in SVG format for scalability and web compatibility*
 
 ### 🔧 Planned Infrastructure Changes
 
