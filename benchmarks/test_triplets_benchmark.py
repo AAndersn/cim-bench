@@ -8,6 +8,10 @@ import os
 import psutil
 import pytest
 from pathlib import Path
+import sys
+
+# Add parsers directory to path
+sys.path.insert(0, str(Path(__file__).parent.parent / "parsers"))
 
 # Import triplets
 try:
@@ -16,18 +20,15 @@ try:
 except ImportError:
     pytest.skip("triplets not available", allow_module_level=True)
 
+# Import dataset definitions
+from datasets import DATASETS, get_size_mb
+
 
 @pytest.fixture(scope="module")
 def svedala_files():
     """Path to Svedala IGM dataset files."""
-    base_path = Path(__file__).parent.parent / "data" / "relicapgrid" / "Instance" / "Grid" / "IGM_Svedala"
-
-    files = {
-        "EQ": base_path / "20220615T2230Z__Svedala_EQ_1.xml",
-        "SSH": base_path / "20220615T2230Z_2D_Svedala_SSH_1.xml",
-        "SV": base_path / "20220615T2230Z_2D_Svedala_SV_1.xml",
-        "TP": base_path / "20220615T2230Z_2D_Svedala_TP_1.xml",
-    }
+    dataset = DATASETS["svedala_igm_cgmes_3"]
+    files = {k: v for k, v in dataset.items() if k != "COMMON"}
 
     # Check if files exist
     for profile, path in files.items():
@@ -71,7 +72,7 @@ def test_triplets_load_eq_only(benchmark, svedala_files, memory_baseline):
     benchmark.extra_info["memory_mb"] = f"{memory_used:.1f}"
     benchmark.extra_info["triplets_count"] = triplet_count
     benchmark.extra_info["unique_objects"] = unique_objects
-    benchmark.extra_info["file_size_mb"] = f"{svedala_files['EQ'].stat().st_size / 1024 / 1024:.1f}"
+    benchmark.extra_info["file_size_mb"] = f"{get_size_mb([svedala_files['EQ']]):.1f}"
 
     assert df is not None
     assert len(df) > 0
@@ -97,8 +98,15 @@ def test_triplets_load_full_model(benchmark, svedala_files, memory_baseline):
     unique_objects = df['ID'].nunique()
     instances = df['INSTANCE_ID'].nunique()
 
+    # Get network statistics (matching pypowsybl metrics)
+    line_count = df.query("KEY == 'Type' & VALUE == 'ACLineSegment'")["ID"].nunique()
+    generator_count = df.query("KEY == 'Type' & VALUE == 'SynchronousMachine'")["ID"].nunique()
+    load_count = (df.query("KEY == 'Type' & VALUE == 'ConformLoad'")["ID"].nunique() +
+                  df.query("KEY == 'Type' & VALUE == 'NonConformLoad'")["ID"].nunique())
+    substation_count = df.query("KEY == 'Type' & VALUE == 'Substation'")["ID"].nunique()
+
     # Calculate total file size
-    total_size_mb = sum(f.stat().st_size for f in svedala_files.values()) / 1024 / 1024
+    total_size_mb = get_size_mb(list(svedala_files.values()))
 
     # Report metrics
     benchmark.extra_info["memory_mb"] = f"{memory_used:.1f}"
@@ -107,6 +115,10 @@ def test_triplets_load_full_model(benchmark, svedala_files, memory_baseline):
     benchmark.extra_info["instances"] = instances
     benchmark.extra_info["total_size_mb"] = f"{total_size_mb:.1f}"
     benchmark.extra_info["files_loaded"] = len(svedala_files)
+    benchmark.extra_info["lines"] = line_count
+    benchmark.extra_info["generators"] = generator_count
+    benchmark.extra_info["loads"] = load_count
+    benchmark.extra_info["substations"] = substation_count
 
     assert df is not None
     assert len(df) > 0

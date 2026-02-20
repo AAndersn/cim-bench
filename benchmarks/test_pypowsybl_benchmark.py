@@ -10,6 +10,10 @@ import pytest
 import tempfile
 import zipfile
 from pathlib import Path
+import sys
+
+# Add parsers directory to path
+sys.path.insert(0, str(Path(__file__).parent.parent / "parsers"))
 
 # Import pypowsybl
 try:
@@ -17,16 +21,17 @@ try:
 except ImportError:
     pytest.skip("pypowsybl not available", allow_module_level=True)
 
+# Import dataset definitions
+from datasets import DATASETS, get_size_mb
+
 
 @pytest.fixture(scope="module")
 def svedala_zip_path():
     """Create a ZIP file with Svedala IGM dataset + CommonData for pypowsybl."""
-    base_path = Path(__file__).parent.parent / "data" / "relicapgrid" / "Instance" / "Grid"
-    svedala_path = base_path / "IGM_Svedala"
-    common_path = base_path / "CommonAndBoundaryData"
+    dataset = DATASETS["svedala_igm_cgmes_3"]
 
-    # Get all required files
-    files = list(svedala_path.glob("*.xml")) + [common_path / "CommonData_and_Boundary_merged.xml"]
+    # Get all files including common data
+    files = [dataset[k] for k in dataset.keys()]
 
     # Check if files exist
     for f in files:
@@ -39,7 +44,7 @@ def svedala_zip_path():
         for f in files:
             zf.write(f, arcname=f.name)
 
-    total_size_mb = sum(f.stat().st_size for f in files) / 1024 / 1024
+    total_size_mb = get_size_mb(files)
 
     yield tmp_zip.name, total_size_mb
 
