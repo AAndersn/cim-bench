@@ -202,32 +202,52 @@ benchmarks/
 
 ## Getting Started
 
-### Clone with Submodules
+### Prerequisites
 
-This repository uses git submodules for test data. Clone with:
+This repository uses **Git LFS** (Large File Storage) for large dataset files. Install it before cloning:
 
 ```bash
+# Ubuntu/Debian
+sudo apt-get install git-lfs
+
+# macOS
+brew install git-lfs
+
+# After installation
+git lfs install
+```
+
+For other systems, see: https://git-lfs.github.com/
+
+### Quick Setup
+
+**Automated setup (recommended):**
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/cim-bench.git
+cd cim-bench
+
+# Run setup script (installs uv, Git LFS, pulls submodules and LFS files, installs dependencies)
+./setup.sh
+```
+
+**Manual setup:**
+```bash
+# Install Git LFS
+git lfs install
+
+# Clone with submodules
 git clone --recurse-submodules https://github.com/yourusername/cim-bench.git
-```
+cd cim-bench
 
-Or if you already cloned without submodules:
+# Pull LFS files (parent repo and all submodules)
+git lfs pull
+git submodule foreach --recursive git lfs pull
 
-```bash
-git submodule update --init --recursive
-```
-
-### Installation
-
-```bash
+# Install dependencies
 uv sync
-```
 
-**Optional: Install visualization dependencies for performance graphs:**
-```bash
-pip install matplotlib
-# or with uv:
-uv pip install matplotlib
-# or install all optional dependencies:
+# Optional: Install visualization dependencies
 uv sync --extra visualization
 ```
 
