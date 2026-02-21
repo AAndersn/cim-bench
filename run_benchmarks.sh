@@ -48,7 +48,7 @@ for benchmark_spec in "${BENCHMARKS[@]}"; do
     IFS=':' read -r test_file output_name display_name <<< "$benchmark_spec"
 
     echo "📊 Running $display_name benchmarks..."
-    pytest "$test_file" \
+    uv run pytest "$test_file" \
         --benchmark-only \
         --benchmark-json="$RESULTS_DIR/${output_name}_benchmark.json" \
         $BENCHMARK_OPTS
@@ -63,7 +63,7 @@ echo "📝 Generating markdown reports..."
 for benchmark_spec in "${BENCHMARKS[@]}"; do
     IFS=':' read -r test_file output_name display_name <<< "$benchmark_spec"
 
-    python tools/generate_report.py \
+    uv run python tools/generate_report.py \
         "$RESULTS_DIR/${output_name}_benchmark.json" \
         "$RESULTS_DIR/${output_name}_report.md"
     echo "   → ${output_name}_report.md"
@@ -73,17 +73,17 @@ echo ""
 # Generate comparison summary if we have multiple benchmarks
 if [ ${#BENCHMARK_JSONS[@]} -gt 1 ]; then
     echo "📊 Generating comparison summary..."
-    python tools/generate_comparison.py "${BENCHMARK_JSONS[@]}" "$RESULTS_DIR/comparison_summary.md"
+    uv run python tools/generate_comparison.py "${BENCHMARK_JSONS[@]}" "$RESULTS_DIR/comparison_summary.md"
     echo "   → comparison_summary.md"
     echo ""
 fi
 
 # Generate visualizations (if matplotlib available)
-if python -c "import matplotlib" 2>/dev/null; then
-    python tools/generate_graphs.py
+if uv run python -c "import matplotlib" 2>/dev/null; then
+    uv run python tools/generate_graphs.py
 else
     echo "⚠️  Matplotlib not installed - skipping graph generation"
-    echo "   Install with: pip install matplotlib"
+    echo "   Install with: uv sync --extra visualization"
     echo ""
 fi
 
