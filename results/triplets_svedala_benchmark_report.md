@@ -13,14 +13,14 @@
 
 ### Triplets Load Svedala
 
-- **Mean time**: 124.5 ms
-- **Min time**: 114.8 ms
-- **Max time**: 129.9 ms
-- **Std dev**: 4.4 ms
-- **Rounds**: 10
+- **Mean time**: 116.6 ms
+- **Min time**: 112.0 ms
+- **Max time**: 137.7 ms
+- **Std dev**: 8.1 ms
+- **Rounds**: 9
 
 **Metrics**:
-- Memory Mb: 45.3
+- Memory Mb: 60.8
 - Triplets Count: 95539
 - Unique Objects: 14540
 - Instances: 5
@@ -31,59 +31,69 @@
 - Total Size Mb: 7.3
 - Library: triplets
 - Dataset: svedala
+- Display Name: triplets
+- Color: #1f77b4
 
 ### Triplets Get Lines
 
-- **Mean time**: 6.0 ms
-- **Min time**: 5.7 ms
-- **Max time**: 7.1 ms
-- **Std dev**: 281.2 μs
-- **Rounds**: 77
+- **Mean time**: 1.6 ms
+- **Min time**: 1.6 ms
+- **Max time**: 1.9 ms
+- **Std dev**: 41.6 μs
+- **Rounds**: 387
 
 **Metrics**:
 - Line Count: 97
 - Query Type: get_lines
 - Library: triplets
 - Dataset: svedala
+- Display Name: triplets
+- Color: #1f77b4
 
 ### Triplets Get Generators
 
-- **Mean time**: 5.6 ms
-- **Min time**: 5.0 ms
-- **Max time**: 7.7 ms
-- **Std dev**: 451.4 μs
-- **Rounds**: 159
+- **Mean time**: 1.7 ms
+- **Min time**: 1.6 ms
+- **Max time**: 2.5 ms
+- **Std dev**: 64.8 μs
+- **Rounds**: 532
 
 **Metrics**:
 - Generator Count: 39
 - Query Type: get_generators
 - Library: triplets
 - Dataset: svedala
+- Display Name: triplets
+- Color: #1f77b4
 
 ### Triplets Get Loads
 
-- **Mean time**: 17.3 ms
-- **Min time**: 16.4 ms
-- **Max time**: 19.0 ms
-- **Std dev**: 602.6 μs
-- **Rounds**: 53
+- **Mean time**: 4.9 ms
+- **Min time**: 4.7 ms
+- **Max time**: 5.8 ms
+- **Std dev**: 123.6 μs
+- **Rounds**: 196
 
 **Metrics**:
 - Load Count: 73
 - Query Type: get_loads
 - Library: triplets
 - Dataset: svedala
+- Display Name: triplets
+- Color: #1f77b4
 
 ### Triplets Get Substations
 
-- **Mean time**: 5.8 ms
-- **Min time**: 5.4 ms
-- **Max time**: 7.0 ms
-- **Std dev**: 311.4 μs
-- **Rounds**: 175
+- **Mean time**: 1.6 ms
+- **Min time**: 1.6 ms
+- **Max time**: 2.0 ms
+- **Std dev**: 49.2 μs
+- **Rounds**: 578
 
 **Metrics**:
 - Substation Count: 57
 - Query Type: get_substations
 - Library: triplets
 - Dataset: svedala
+- Display Name: triplets
+- Color: #1f77b4

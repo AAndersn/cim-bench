@@ -13,14 +13,14 @@
 
 ### Pypowsybl Load Realgrid
 
-- **Mean time**: 4.41 s
-- **Min time**: 4.28 s
-- **Max time**: 4.58 s
-- **Std dev**: 119.3 ms
+- **Mean time**: 4.33 s
+- **Min time**: 4.24 s
+- **Max time**: 4.47 s
+- **Std dev**: 106.3 ms
 - **Rounds**: 5
 
 **Metrics**:
-- Memory Mb: 5463.5
+- Memory Mb: 4559.9
 - Buses: 6051
 - Lines: 7561
 - Ac Lines: 7561
@@ -31,59 +31,69 @@
 - Dataset Size Mb: 86.5
 - Library: pypowsybl
 - Dataset: realgrid
+- Display Name: PyPowSyBl
+- Color: #ff7f0e
 
 ### Pypowsybl Get Lines
 
-- **Mean time**: 37.5 ms
-- **Min time**: 33.7 ms
-- **Max time**: 58.4 ms
-- **Std dev**: 6.3 ms
-- **Rounds**: 29
+- **Mean time**: 35.6 ms
+- **Min time**: 33.9 ms
+- **Max time**: 39.3 ms
+- **Std dev**: 1.5 ms
+- **Rounds**: 28
 
 **Metrics**:
 - Line Count: 7561
 - Query Type: get_lines
 - Library: pypowsybl
 - Dataset: realgrid
+- Display Name: PyPowSyBl
+- Color: #ff7f0e
 
 ### Pypowsybl Get Generators
 
-- **Mean time**: 2.8 ms
-- **Min time**: 2.3 ms
-- **Max time**: 7.5 ms
-- **Std dev**: 863.8 μs
-- **Rounds**: 165
+- **Mean time**: 2.7 ms
+- **Min time**: 2.5 ms
+- **Max time**: 4.9 ms
+- **Std dev**: 322.0 μs
+- **Rounds**: 151
 
 **Metrics**:
 - Generator Count: 1347
 - Query Type: get_generators
 - Library: pypowsybl
 - Dataset: realgrid
+- Display Name: PyPowSyBl
+- Color: #ff7f0e
 
 ### Pypowsybl Get Loads
 
-- **Mean time**: 19.2 ms
-- **Min time**: 17.8 ms
-- **Max time**: 24.2 ms
-- **Std dev**: 1.2 ms
-- **Rounds**: 42
+- **Mean time**: 22.3 ms
+- **Min time**: 19.0 ms
+- **Max time**: 32.5 ms
+- **Std dev**: 3.6 ms
+- **Rounds**: 45
 
 **Metrics**:
 - Load Count: 6687
 - Query Type: get_loads
 - Library: pypowsybl
 - Dataset: realgrid
+- Display Name: PyPowSyBl
+- Color: #ff7f0e
 
 ### Pypowsybl Get Substations
 
-- **Mean time**: 3.7 ms
-- **Min time**: 2.8 ms
-- **Max time**: 84.3 ms
-- **Std dev**: 5.7 ms
-- **Rounds**: 206
+- **Mean time**: 7.2 ms
+- **Min time**: 3.7 ms
+- **Max time**: 64.4 ms
+- **Std dev**: 5.6 ms
+- **Rounds**: 131
 
 **Metrics**:
 - Substation Count: 4791
 - Query Type: get_substations
 - Library: pypowsybl
 - Dataset: realgrid
+- Display Name: PyPowSyBl
+- Color: #ff7f0e

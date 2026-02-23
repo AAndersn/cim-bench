@@ -30,7 +30,7 @@ class PypowsyblAdapter(ParserAdapter):
     @classmethod
     def get_color(cls) -> str:
         """Get the color hex code for graph visualization."""
-        return "#e74c3c"  # Red
+        return "#ff7f0e"  # Tab10 orange
 
     def load(self, dataset_key: str):
         """Load using pypowsybl."""

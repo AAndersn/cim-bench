@@ -124,76 +124,149 @@ def plot_dataset(dataset_name, tools_data, output_dir):
 
 
 def plot_cross_dataset(data, output_dir):
-    """Generate cross-dataset comparison charts."""
-    datasets = sorted(data.keys())
+    """Generate cross-dataset comparison charts with separate subplots per dataset."""
+    # Sort datasets by size (smaller first)
+    dataset_sizes = {'svedala': 7.3, 'realgrid': 86.5}
+    datasets = sorted(data.keys(), key=lambda ds: dataset_sizes.get(ds, 0))
+
     if len(datasets) < 2:
         return
 
     tools = sorted(set(t for ds in data.values() for t in ds.keys()))
-    colors = {t: data[datasets[0]][t].get("color", "#999999") for t in tools if t in data[datasets[0]]}
 
-    x = np.arange(len(datasets))
-    width = 0.8 / len(tools)
+    # Get colors from first available dataset
+    colors = {}
+    for t in tools:
+        for ds in datasets:
+            if t in data[ds]:
+                colors[t] = data[ds][t].get("color", "#999999")
+                break
 
-    # Import comparison
-    fig, ax = plt.subplots(figsize=(10, 6))
-    for i, tool in enumerate(tools):
-        times = [data[ds].get(tool, {}).get("load", {}).get("time", 0) for ds in datasets]
-        offset = (i - len(tools)/2 + 0.5) * width
-        bars = ax.bar(x + offset, times, width, label=tool, color=colors.get(tool, "#999999"))
-        for bar in bars:
-            h = bar.get_height()
-            ax.text(bar.get_x() + bar.get_width()/2, h, f'{h:.1f}', ha='center', va='bottom', fontsize=9)
+    # Import comparison - separate subplots per dataset
+    fig, axes = plt.subplots(len(datasets), 1, figsize=(12, 5 * len(datasets)))
+    if len(datasets) == 1:
+        axes = [axes]
 
-    ax.set_ylabel('Import Time (ms)', fontsize=12)
-    ax.set_title('Import Performance Comparison', fontsize=14, fontweight='bold')
-    ax.set_xticks(x)
-    ax.set_xticklabels([f'{ds.capitalize()}\n(7.3 MB)' if ds == 'svedala' else f'{ds.capitalize()}\n(86.5 MB)' for ds in datasets])
-    ax.legend(fontsize=11)
-    ax.grid(axis='y', alpha=0.3)
+    # Find max value across all datasets for consistent scale
+    max_time = max(
+        data[ds].get(tool, {}).get("load", {}).get("time", 0)
+        for ds in datasets
+        for tool in tools
+    )
+
+    for idx, ds in enumerate(datasets):
+        ax = axes[idx]
+        ds_label = f"{ds.capitalize()} (7.3 MB)" if ds == 'svedala' else f"{ds.capitalize()} (86.5 MB)"
+
+        entries = []
+        for tool in tools:
+            time = data[ds].get(tool, {}).get("load", {}).get("time", 0)
+            if time > 0:
+                entries.append((tool, time, colors.get(tool, "#999999")))
+
+        entries.sort(key=lambda x: x[1])
+        labels = [e[0] for e in entries]
+        values = [e[1] for e in entries]
+        bar_colors = [e[2] for e in entries]
+
+        bars = ax.barh(labels, values, color=bar_colors)
+        ax.set_xlabel('Import Time (ms)', fontsize=12)
+        ax.set_title(ds_label, fontsize=12, fontweight='bold')
+        ax.set_xlim(0, max_time * 1.15)
+        ax.grid(axis='x', alpha=0.3)
+
+        for i, (bar, val) in enumerate(zip(bars, values)):
+            ax.text(val, i, f' {val:.1f} ms', va='center', fontsize=10)
+
+    fig.suptitle('Import Performance Comparison', fontsize=14, fontweight='bold', y=0.995)
     plt.tight_layout()
     plt.savefig(output_dir / "import_comparison.svg", format='svg', bbox_inches='tight')
     print("   → import_comparison.svg")
+    plt.close()
 
-    # Memory comparison
-    fig, ax = plt.subplots(figsize=(10, 6))
-    for i, tool in enumerate(tools):
-        memory = [data[ds].get(tool, {}).get("load", {}).get("memory", 0) for ds in datasets]
-        offset = (i - len(tools)/2 + 0.5) * width
-        bars = ax.bar(x + offset, memory, width, label=tool, color=colors.get(tool, "#999999"))
-        for bar in bars:
-            h = bar.get_height()
-            ax.text(bar.get_x() + bar.get_width()/2, h, f'{h:.1f}', ha='center', va='bottom', fontsize=9)
+    # Memory comparison - separate subplots per dataset
+    fig, axes = plt.subplots(len(datasets), 1, figsize=(12, 5 * len(datasets)))
+    if len(datasets) == 1:
+        axes = [axes]
 
-    ax.set_ylabel('Memory Usage (MB)', fontsize=12)
-    ax.set_title('Memory Consumption Comparison', fontsize=14, fontweight='bold')
-    ax.set_xticks(x)
-    ax.set_xticklabels([f'{ds.capitalize()}\n(7.3 MB)' if ds == 'svedala' else f'{ds.capitalize()}\n(86.5 MB)' for ds in datasets])
-    ax.legend(fontsize=11)
-    ax.grid(axis='y', alpha=0.3)
+    # Find max value across all datasets for consistent scale
+    max_memory = max(
+        data[ds].get(tool, {}).get("load", {}).get("memory", 0)
+        for ds in datasets
+        for tool in tools
+    )
+
+    for idx, ds in enumerate(datasets):
+        ax = axes[idx]
+        ds_label = f"{ds.capitalize()} (7.3 MB)" if ds == 'svedala' else f"{ds.capitalize()} (86.5 MB)"
+
+        entries = []
+        for tool in tools:
+            memory = data[ds].get(tool, {}).get("load", {}).get("memory", 0)
+            if memory > 0:
+                entries.append((tool, memory, colors.get(tool, "#999999")))
+
+        entries.sort(key=lambda x: x[1])
+        labels = [e[0] for e in entries]
+        values = [e[1] for e in entries]
+        bar_colors = [e[2] for e in entries]
+
+        bars = ax.barh(labels, values, color=bar_colors)
+        ax.set_xlabel('Memory Usage (MB)', fontsize=12)
+        ax.set_title(ds_label, fontsize=12, fontweight='bold')
+        ax.set_xlim(0, max_memory * 1.15)
+        ax.grid(axis='x', alpha=0.3)
+
+        for i, (bar, val) in enumerate(zip(bars, values)):
+            ax.text(val, i, f' {val:.1f} MB', va='center', fontsize=10)
+
+    fig.suptitle('Memory Consumption Comparison', fontsize=14, fontweight='bold', y=0.995)
     plt.tight_layout()
     plt.savefig(output_dir / "memory_comparison.svg", format='svg', bbox_inches='tight')
     print("   → memory_comparison.svg")
+    plt.close()
 
-    # Query comparison
-    fig, ax = plt.subplots(figsize=(10, 6))
-    for i, tool in enumerate(tools):
-        query_times = [np.mean(data[ds].get(tool, {}).get("queries", [0])) for ds in datasets]
-        offset = (i - len(tools)/2 + 0.5) * width
-        bars = ax.bar(x + offset, query_times, width, label=tool, color=colors.get(tool, "#999999"))
-        for bar in bars:
-            h = bar.get_height()
-            ax.text(bar.get_x() + bar.get_width()/2, h, f'{h:.2f}', ha='center', va='bottom', fontsize=9)
+    # Query comparison - separate subplots per dataset
+    fig, axes = plt.subplots(len(datasets), 1, figsize=(12, 5 * len(datasets)))
+    if len(datasets) == 1:
+        axes = [axes]
 
-    ax.set_ylabel('Average Query Time (ms)', fontsize=12)
-    ax.set_title('Query Performance Comparison', fontsize=14, fontweight='bold')
-    ax.set_xticks(x)
-    ax.set_xticklabels([f'{ds.capitalize()}\n(7.3 MB)' if ds == 'svedala' else f'{ds.capitalize()}\n(86.5 MB)' for ds in datasets])
-    ax.legend(fontsize=11)
-    ax.grid(axis='y', alpha=0.3)
+    # Find max value across all datasets for consistent scale
+    max_query = max(
+        np.mean(data[ds].get(tool, {}).get("queries", [0]))
+        for ds in datasets
+        for tool in tools
+    )
+
+    for idx, ds in enumerate(datasets):
+        ax = axes[idx]
+        ds_label = f"{ds.capitalize()} (7.3 MB)" if ds == 'svedala' else f"{ds.capitalize()} (86.5 MB)"
+
+        entries = []
+        for tool in tools:
+            query_time = np.mean(data[ds].get(tool, {}).get("queries", [0]))
+            if query_time > 0:
+                entries.append((tool, query_time, colors.get(tool, "#999999")))
+
+        entries.sort(key=lambda x: x[1])
+        labels = [e[0] for e in entries]
+        values = [e[1] for e in entries]
+        bar_colors = [e[2] for e in entries]
+
+        bars = ax.barh(labels, values, color=bar_colors)
+        ax.set_xlabel('Average Query Time (ms)', fontsize=12)
+        ax.set_title(ds_label, fontsize=12, fontweight='bold')
+        ax.set_xlim(0, max_query * 1.15)
+        ax.grid(axis='x', alpha=0.3)
+
+        for i, (bar, val) in enumerate(zip(bars, values)):
+            ax.text(val, i, f' {val:.3f} ms', va='center', fontsize=10)
+
+    fig.suptitle('Query Performance Comparison', fontsize=14, fontweight='bold', y=0.995)
     plt.tight_layout()
     plt.savefig(output_dir / "query_comparison.svg", format='svg', bbox_inches='tight')
     print("   → query_comparison.svg")
+    plt.close()
 
 
 def main():
