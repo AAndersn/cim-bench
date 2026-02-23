@@ -13,6 +13,18 @@ class ParserAdapter(ABC):
     eliminating the need for parser-specific benchmark code.
     """
 
+    @classmethod
+    @abstractmethod
+    def get_display_name(cls) -> str:
+        """Get the display name for this parser (e.g., 'PyPowSyBl', 'Triplets')."""
+        pass
+
+    @classmethod
+    @abstractmethod
+    def get_color(cls) -> str:
+        """Get the color hex code for graph visualization (e.g., '#3498db')."""
+        pass
+
     @abstractmethod
     def load(self, dataset_key: str) -> Any:
         """

@@ -17,6 +17,16 @@ class TripletsAdapter(ParserAdapter):
     def __init__(self):
         self.df = None
 
+    @classmethod
+    def get_display_name(cls) -> str:
+        """Get the display name for this parser."""
+        return "Triplets"
+
+    @classmethod
+    def get_color(cls) -> str:
+        """Get the color hex code for graph visualization."""
+        return "#3498db"  # Blue
+
     def load(self, dataset_key: str):
         """Load using triplets library directly."""
         dataset = DATASETS[dataset_key]

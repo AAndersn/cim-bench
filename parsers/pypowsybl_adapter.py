@@ -22,6 +22,16 @@ class PypowsyblAdapter(ParserAdapter):
     def __init__(self):
         self._temp_zip = None  # Track temp file for cleanup
 
+    @classmethod
+    def get_display_name(cls) -> str:
+        """Get the display name for this parser."""
+        return "PyPowSyBl"
+
+    @classmethod
+    def get_color(cls) -> str:
+        """Get the color hex code for graph visualization."""
+        return "#e74c3c"  # Red
+
     def load(self, dataset_key: str):
         """Load using pypowsybl."""
         dataset = DATASETS[dataset_key]

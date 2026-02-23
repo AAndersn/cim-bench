@@ -80,6 +80,8 @@ def create_benchmarks(adapter, dataset_key, parser_name, dataset_name):
         # Add library and dataset metadata
         metrics["library"] = parser_name
         metrics["dataset"] = dataset_name
+        metrics["display_name"] = adapter.__class__.get_display_name()
+        metrics["color"] = adapter.__class__.get_color()
 
         for key, value in metrics.items():
             benchmark.extra_info[key] = value
@@ -98,6 +100,8 @@ def create_benchmarks(adapter, dataset_key, parser_name, dataset_name):
         benchmark.extra_info["query_type"] = "get_lines"
         benchmark.extra_info["library"] = parser_name
         benchmark.extra_info["dataset"] = dataset_name
+        benchmark.extra_info["display_name"] = adapter.__class__.get_display_name()
+        benchmark.extra_info["color"] = adapter.__class__.get_color()
         assert count > 0
 
     def test_get_generators(benchmark, loaded_object):
@@ -107,6 +111,8 @@ def create_benchmarks(adapter, dataset_key, parser_name, dataset_name):
         benchmark.extra_info["query_type"] = "get_generators"
         benchmark.extra_info["library"] = parser_name
         benchmark.extra_info["dataset"] = dataset_name
+        benchmark.extra_info["display_name"] = adapter.__class__.get_display_name()
+        benchmark.extra_info["color"] = adapter.__class__.get_color()
         assert count > 0
 
     def test_get_loads(benchmark, loaded_object):
@@ -116,6 +122,8 @@ def create_benchmarks(adapter, dataset_key, parser_name, dataset_name):
         benchmark.extra_info["query_type"] = "get_loads"
         benchmark.extra_info["library"] = parser_name
         benchmark.extra_info["dataset"] = dataset_name
+        benchmark.extra_info["display_name"] = adapter.__class__.get_display_name()
+        benchmark.extra_info["color"] = adapter.__class__.get_color()
         # RealGrid has 0 loads, so allow >= 0
         assert count >= 0
 
@@ -126,6 +134,8 @@ def create_benchmarks(adapter, dataset_key, parser_name, dataset_name):
         benchmark.extra_info["query_type"] = "get_substations"
         benchmark.extra_info["library"] = parser_name
         benchmark.extra_info["dataset"] = dataset_name
+        benchmark.extra_info["display_name"] = adapter.__class__.get_display_name()
+        benchmark.extra_info["color"] = adapter.__class__.get_color()
         assert count > 0
 
     # Set proper test names for pytest discovery
