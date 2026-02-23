@@ -23,7 +23,17 @@ def format_time(seconds):
 
 def get_library_name(benchmark_data, json_file):
     """Extract library name and dataset from benchmark data."""
-    # Extract from filename: triplets_svedala_benchmark.json -> (triplets, Svedala)
+    # Read from extra_info in JSON (preferred method)
+    if benchmark_data["benchmarks"]:
+        first_bench = benchmark_data["benchmarks"][0]
+        extra_info = first_bench.get("extra_info", {})
+
+        if "library" in extra_info and "dataset" in extra_info:
+            library = extra_info["library"]
+            dataset = extra_info["dataset"].capitalize()
+            return f"{library} ({dataset})"
+
+    # Fallback: Extract from filename
     filename = Path(json_file).stem.replace("_benchmark", "")
     parts = filename.split("_")
 
@@ -32,19 +42,7 @@ def get_library_name(benchmark_data, json_file):
         dataset = parts[1].capitalize()
         return f"{library} ({dataset})"
 
-    # Fallback to old method
-    if not benchmark_data["benchmarks"]:
-        return "Unknown"
-
-    first_name = benchmark_data["benchmarks"][0]["name"]
-    if "triplets" in first_name.lower():
-        return "triplets"
-    elif "pypowsybl" in first_name.lower():
-        return "pypowsybl"
-    elif "cimpy" in first_name.lower():
-        return "cimpy"
-    else:
-        return parts[0] if parts else "Unknown"
+    return "Unknown"
 
 
 def extract_load_benchmark(benchmarks):

@@ -13,166 +13,166 @@
 
 | Library | Load Time (mean) | Memory (MB) | Elements | Notes |
 |---------|------------------|-------------|----------|-------|
-| triplets (Svedala) | 124.8 ms | 27.6 MB | 97 lines, 39 gen, 73 loads | Dataset: 7.3 MB |
-| pypowsybl (Svedala) | 474.4 ms | 887.4 MB | 97 lines, 39 gen, 73 loads | Dataset: 7.3 MB |
-| triplets (Realgrid) | 1.31 s | 516.9 MB | 7561 lines, 1347 gen, 6687 loads | Dataset: 86.5 MB |
-| pypowsybl (Realgrid) | 4.79 s | 3371.9 MB | 7561 lines, 1347 gen, 6687 loads | Dataset: 86.5 MB |
+| triplets (Svedala) | 124.5 ms | 45.3 MB | 97 lines, 39 gen, 73 loads | Dataset: 7.3 MB |
+| pypowsybl (Svedala) | 443.4 ms | 1251.5 MB | 97 lines, 39 gen, 73 loads | Dataset: 7.3 MB |
+| triplets (Realgrid) | 1.37 s | 602.9 MB | 7561 lines, 1347 gen, 6687 loads | Dataset: 86.5 MB |
+| pypowsybl (Realgrid) | 4.41 s | 5463.5 MB | 7561 lines, 1347 gen, 6687 loads | Dataset: 86.5 MB |
 
 ### Query Performance
 
 | Query Type | triplets (Svedala) | pypowsybl (Svedala) | triplets (Realgrid) | pypowsybl (Realgrid) |
 |------------|---|---|---|---|
-| get_generators | 6.4 ms | 293.7 μs | 62.2 ms | 4.1 ms |
-| get_lines | 6.0 ms | 318.4 μs | 67.5 ms | 40.2 ms |
-| get_loads | 17.6 ms | 212.5 μs | 190.9 ms | 22.3 ms |
-| get_substations | 6.0 ms | 129.9 μs | 62.6 ms | 5.5 ms |
+| get_generators | 5.6 ms | 270.8 μs | 68.1 ms | 2.8 ms |
+| get_lines | 6.0 ms | 301.8 μs | 72.8 ms | 37.5 ms |
+| get_loads | 17.3 ms | 195.0 μs | 205.4 ms | 19.2 ms |
+| get_substations | 5.8 ms | 125.0 μs | 65.5 ms | 3.7 ms |
 
 ## Detailed Results
 
 ### triplets (Svedala)
 
-#### Triplets Load Full Model
+#### Triplets Load Svedala
 
-- **Mean**: 124.8 ms
-- **Min**: 114.9 ms
-- **Max**: 148.4 ms
-- **Rounds**: 9
+- **Mean**: 124.5 ms
+- **Min**: 114.8 ms
+- **Max**: 129.9 ms
+- **Rounds**: 10
 
 #### Triplets Get Lines
 
 - **Mean**: 6.0 ms
-- **Min**: 4.4 ms
-- **Max**: 8.2 ms
-- **Rounds**: 90
+- **Min**: 5.7 ms
+- **Max**: 7.1 ms
+- **Rounds**: 77
 
 #### Triplets Get Generators
 
-- **Mean**: 6.4 ms
-- **Min**: 4.4 ms
-- **Max**: 10.3 ms
-- **Rounds**: 166
+- **Mean**: 5.6 ms
+- **Min**: 5.0 ms
+- **Max**: 7.7 ms
+- **Rounds**: 159
 
 #### Triplets Get Loads
 
-- **Mean**: 17.6 ms
-- **Min**: 13.5 ms
-- **Max**: 24.7 ms
-- **Rounds**: 64
+- **Mean**: 17.3 ms
+- **Min**: 16.4 ms
+- **Max**: 19.0 ms
+- **Rounds**: 53
 
 #### Triplets Get Substations
 
-- **Mean**: 6.0 ms
-- **Min**: 4.5 ms
-- **Max**: 9.0 ms
-- **Rounds**: 197
+- **Mean**: 5.8 ms
+- **Min**: 5.4 ms
+- **Max**: 7.0 ms
+- **Rounds**: 175
 
 ### pypowsybl (Svedala)
 
-#### Pypowsybl Load Network
+#### Pypowsybl Load Svedala
 
-- **Mean**: 474.4 ms
-- **Min**: 464.6 ms
-- **Max**: 491.7 ms
-- **Rounds**: 3
+- **Mean**: 443.4 ms
+- **Min**: 425.3 ms
+- **Max**: 460.3 ms
+- **Rounds**: 5
 
 #### Pypowsybl Get Lines
 
-- **Mean**: 318.4 μs
-- **Min**: 259.1 μs
-- **Max**: 1.2 ms
-- **Rounds**: 1043
+- **Mean**: 301.8 μs
+- **Min**: 267.1 μs
+- **Max**: 23.3 ms
+- **Rounds**: 1157
 
 #### Pypowsybl Get Generators
 
-- **Mean**: 293.7 μs
-- **Min**: 262.4 μs
-- **Max**: 501.7 μs
-- **Rounds**: 994
+- **Mean**: 270.8 μs
+- **Min**: 258.1 μs
+- **Max**: 725.8 μs
+- **Rounds**: 1440
 
 #### Pypowsybl Get Loads
 
-- **Mean**: 212.5 μs
-- **Min**: 196.0 μs
-- **Max**: 367.8 μs
-- **Rounds**: 1270
+- **Mean**: 195.0 μs
+- **Min**: 180.7 μs
+- **Max**: 403.7 μs
+- **Rounds**: 1963
 
 #### Pypowsybl Get Substations
 
-- **Mean**: 129.9 μs
-- **Min**: 117.7 μs
-- **Max**: 312.6 μs
-- **Rounds**: 1538
+- **Mean**: 125.0 μs
+- **Min**: 118.6 μs
+- **Max**: 325.0 μs
+- **Rounds**: 3571
 
 ### triplets (Realgrid)
 
 #### Triplets Load Realgrid
 
-- **Mean**: 1.31 s
-- **Min**: 1.31 s
-- **Max**: 1.32 s
-- **Rounds**: 3
+- **Mean**: 1.37 s
+- **Min**: 1.20 s
+- **Max**: 1.46 s
+- **Rounds**: 5
 
-#### Triplets Get Lines Realgrid
+#### Triplets Get Lines
 
-- **Mean**: 67.5 ms
-- **Min**: 62.0 ms
-- **Max**: 75.3 ms
-- **Rounds**: 11
+- **Mean**: 72.8 ms
+- **Min**: 66.0 ms
+- **Max**: 92.6 ms
+- **Rounds**: 9
 
-#### Triplets Get Generators Realgrid
+#### Triplets Get Generators
 
-- **Mean**: 62.2 ms
-- **Min**: 61.3 ms
-- **Max**: 63.3 ms
-- **Rounds**: 17
+- **Mean**: 68.1 ms
+- **Min**: 65.2 ms
+- **Max**: 83.0 ms
+- **Rounds**: 15
 
-#### Triplets Get Loads Realgrid
+#### Triplets Get Loads
 
-- **Mean**: 190.9 ms
-- **Min**: 186.3 ms
-- **Max**: 200.9 ms
+- **Mean**: 205.4 ms
+- **Min**: 194.6 ms
+- **Max**: 253.3 ms
 - **Rounds**: 6
 
-#### Triplets Get Substations Realgrid
+#### Triplets Get Substations
 
-- **Mean**: 62.6 ms
-- **Min**: 61.2 ms
-- **Max**: 64.3 ms
-- **Rounds**: 17
+- **Mean**: 65.5 ms
+- **Min**: 65.0 ms
+- **Max**: 66.1 ms
+- **Rounds**: 15
 
 ### pypowsybl (Realgrid)
 
 #### Pypowsybl Load Realgrid
 
-- **Mean**: 4.79 s
-- **Min**: 4.71 s
-- **Max**: 4.91 s
-- **Rounds**: 3
+- **Mean**: 4.41 s
+- **Min**: 4.28 s
+- **Max**: 4.58 s
+- **Rounds**: 5
 
-#### Pypowsybl Get Lines Realgrid
+#### Pypowsybl Get Lines
 
-- **Mean**: 40.2 ms
-- **Min**: 34.2 ms
-- **Max**: 48.2 ms
-- **Rounds**: 26
+- **Mean**: 37.5 ms
+- **Min**: 33.7 ms
+- **Max**: 58.4 ms
+- **Rounds**: 29
 
-#### Pypowsybl Get Generators Realgrid
+#### Pypowsybl Get Generators
 
-- **Mean**: 4.1 ms
-- **Min**: 2.4 ms
-- **Max**: 10.5 ms
-- **Rounds**: 172
+- **Mean**: 2.8 ms
+- **Min**: 2.3 ms
+- **Max**: 7.5 ms
+- **Rounds**: 165
 
-#### Pypowsybl Get Loads Realgrid
+#### Pypowsybl Get Loads
 
-- **Mean**: 22.3 ms
-- **Min**: 18.9 ms
-- **Max**: 27.3 ms
-- **Rounds**: 46
+- **Mean**: 19.2 ms
+- **Min**: 17.8 ms
+- **Max**: 24.2 ms
+- **Rounds**: 42
 
-#### Pypowsybl Get Substations Realgrid
+#### Pypowsybl Get Substations
 
-- **Mean**: 5.5 ms
-- **Min**: 3.6 ms
-- **Max**: 8.4 ms
-- **Rounds**: 110
+- **Mean**: 3.7 ms
+- **Min**: 2.8 ms
+- **Max**: 84.3 ms
+- **Rounds**: 206

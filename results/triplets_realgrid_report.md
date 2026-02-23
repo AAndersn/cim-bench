@@ -13,67 +13,77 @@
 
 ### Triplets Load Realgrid
 
-- **Mean time**: 1.31 s
-- **Min time**: 1.31 s
-- **Max time**: 1.32 s
-- **Std dev**: 6.1 ms
-- **Rounds**: 3
+- **Mean time**: 1.37 s
+- **Min time**: 1.20 s
+- **Max time**: 1.46 s
+- **Std dev**: 107.8 ms
+- **Rounds**: 5
 
 **Metrics**:
-- Memory Mb: 516.9
+- Memory Mb: 602.9
 - Triplets Count: 1146215
 - Unique Objects: 149174
 - Instances: 4
-- Dataset Size Mb: 86.5
 - Lines: 7561
 - Generators: 1347
 - Loads: 6687
 - Substations: 4875
+- Dataset Size Mb: 86.5
+- Library: triplets
+- Dataset: realgrid
 
-### Triplets Get Lines Realgrid
+### Triplets Get Lines
 
-- **Mean time**: 67.5 ms
-- **Min time**: 62.0 ms
-- **Max time**: 75.3 ms
-- **Std dev**: 5.6 ms
-- **Rounds**: 11
+- **Mean time**: 72.8 ms
+- **Min time**: 66.0 ms
+- **Max time**: 92.6 ms
+- **Std dev**: 9.9 ms
+- **Rounds**: 9
 
 **Metrics**:
 - Line Count: 7561
 - Query Type: get_lines
+- Library: triplets
+- Dataset: realgrid
 
-### Triplets Get Generators Realgrid
+### Triplets Get Generators
 
-- **Mean time**: 62.2 ms
-- **Min time**: 61.3 ms
-- **Max time**: 63.3 ms
-- **Std dev**: 554.1 μs
-- **Rounds**: 17
+- **Mean time**: 68.1 ms
+- **Min time**: 65.2 ms
+- **Max time**: 83.0 ms
+- **Std dev**: 5.5 ms
+- **Rounds**: 15
 
 **Metrics**:
 - Generator Count: 1347
 - Query Type: get_generators
+- Library: triplets
+- Dataset: realgrid
 
-### Triplets Get Loads Realgrid
+### Triplets Get Loads
 
-- **Mean time**: 190.9 ms
-- **Min time**: 186.3 ms
-- **Max time**: 200.9 ms
-- **Std dev**: 5.2 ms
+- **Mean time**: 205.4 ms
+- **Min time**: 194.6 ms
+- **Max time**: 253.3 ms
+- **Std dev**: 23.5 ms
 - **Rounds**: 6
 
 **Metrics**:
 - Load Count: 6687
 - Query Type: get_loads
+- Library: triplets
+- Dataset: realgrid
 
-### Triplets Get Substations Realgrid
+### Triplets Get Substations
 
-- **Mean time**: 62.6 ms
-- **Min time**: 61.2 ms
-- **Max time**: 64.3 ms
-- **Std dev**: 1.0 ms
-- **Rounds**: 17
+- **Mean time**: 65.5 ms
+- **Min time**: 65.0 ms
+- **Max time**: 66.1 ms
+- **Std dev**: 294.2 μs
+- **Rounds**: 15
 
 **Metrics**:
 - Substation Count: 4875
 - Query Type: get_substations
+- Library: triplets
+- Dataset: realgrid
