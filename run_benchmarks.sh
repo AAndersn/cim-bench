@@ -14,17 +14,6 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
-# ============================================================================
-# BENCHMARK CONFIGURATION
-# Add new benchmarks here: "test_file:output_name:display_name"
-# ============================================================================
-BENCHMARKS=(
-    "benchmarks/triplets_svedala_benchmark.py:triplets_svedala:Triplets-Svedala"
-    "benchmarks/pypowsybl_svedala_benchmark.py:pypowsybl_svedala:PyPowSyBl-Svedala"
-    "benchmarks/triplets_realgrid_benchmark.py:triplets_realgrid:Triplets-RealGrid"
-    "benchmarks/pypowsybl_realgrid_benchmark.py:pypowsybl_realgrid:PyPowSyBl-RealGrid"
-)
-
 RESULTS_DIR="results"
 BENCHMARK_OPTS=""
 
@@ -42,35 +31,50 @@ echo "CIM-bench Benchmark Suite"
 echo "=================================="
 echo ""
 
-# Run benchmarks
-BENCHMARK_JSONS=()
-for benchmark_spec in "${BENCHMARKS[@]}"; do
-    IFS=':' read -r test_file output_name display_name <<< "$benchmark_spec"
+# Auto-discover all benchmark files
+echo "📊 Discovering benchmarks..."
+BENCHMARK_FILES=(benchmarks/*_benchmark.py)
+echo "Found ${#BENCHMARK_FILES[@]} benchmark files"
+echo ""
 
-    echo "📊 Running $display_name benchmarks..."
+# Run each benchmark
+for test_file in "${BENCHMARK_FILES[@]}"; do
+    # Skip if not a file
+    [[ -f "$test_file" ]] || continue
+
+    # Skip test_ prefixed files (unit tests, not benchmarks)
+    basename="${test_file##*/}"
+    [[ "$basename" == test_* ]] && continue
+
+    # Extract basename for output file
+    output_json="$RESULTS_DIR/${basename%.py}.json"
+
+    echo "📊 Running ${basename}..."
     uv run pytest "$test_file" \
         --benchmark-only \
-        --benchmark-json="$RESULTS_DIR/${output_name}_benchmark.json" \
+        --benchmark-json="$output_json" \
         $BENCHMARK_OPTS
-    echo "✅ $display_name benchmarks complete"
+    echo "✅ ${basename} complete"
     echo ""
-
-    BENCHMARK_JSONS+=("$RESULTS_DIR/${output_name}_benchmark.json")
 done
 
-# Generate markdown reports
+# Generate markdown reports from all JSON files
 echo "📝 Generating markdown reports..."
-for benchmark_spec in "${BENCHMARKS[@]}"; do
-    IFS=':' read -r test_file output_name display_name <<< "$benchmark_spec"
+for json_file in "$RESULTS_DIR"/*_benchmark.json; do
+    [[ -f "$json_file" ]] || continue
 
-    uv run python tools/generate_report.py \
-        "$RESULTS_DIR/${output_name}_benchmark.json" \
-        "$RESULTS_DIR/${output_name}_report.md"
-    echo "   → ${output_name}_report.md"
+    # Skip test_ prefixed files
+    basename_json="$(basename "$json_file")"
+    [[ "$basename_json" == test_* ]] && continue
+
+    report_file="${json_file%.json}_report.md"
+    uv run python tools/generate_report.py "$json_file" "$report_file"
+    echo "   → $(basename "$report_file")"
 done
 echo ""
 
-# Generate comparison summary if we have multiple benchmarks
+# Generate comparison summary
+BENCHMARK_JSONS=("$RESULTS_DIR"/*_benchmark.json)
 if [ ${#BENCHMARK_JSONS[@]} -gt 1 ]; then
     echo "📊 Generating comparison summary..."
     uv run python tools/generate_comparison.py "${BENCHMARK_JSONS[@]}" "$RESULTS_DIR/comparison_summary.md"
@@ -94,11 +98,13 @@ echo ""
 echo "Results available in: $RESULTS_DIR/"
 echo ""
 echo "Reports:"
-for benchmark_spec in "${BENCHMARKS[@]}"; do
-    IFS=':' read -r test_file output_name display_name <<< "$benchmark_spec"
-    echo "  - ${output_name}_report.md"
+for report in "$RESULTS_DIR"/*_report.md; do
+    [[ -f "$report" ]] || continue
+
+    # Skip test_ prefixed files
+    basename_report="$(basename "$report")"
+    [[ "$basename_report" == test_* ]] && continue
+
+    echo "  - $basename_report"
 done
-if [ ${#BENCHMARK_JSONS[@]} -gt 1 ]; then
-    echo "  - comparison_summary.md"
-fi
 echo ""
