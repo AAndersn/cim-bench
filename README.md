@@ -23,12 +23,12 @@ Latest results on AMD Ryzen AI 9 HX 370, 64GB RAM, Python 3.13.12:
 | Library | Load Time | Memory | Query Speed | Elements |
 |---------|-----------|--------|-------------|----------|
 | **triplets** | 1.56 s | 515.6 MB | 17.6-52.9 ms | 7561 lines, 1347 gen, 6687 loads, 4875 subs |
-| **pypowsybl** ⚠️ | 4.85 s | 4433.3 MB | 3.1-35.3 ms | 7561 lines, 1347 gen, 6687 loads, 4791 subs |
+| **pypowsybl** | 4.85 s | 4433.3 MB | 3.1-35.3 ms | 7561 lines, 1347 gen, 6687 loads, 4791* subs |
 | **VeraGrid** | 17.84 s | 2681.1 MB | 47-125 ns | 7561 lines, 1347 gen, 6687 loads, 4875 subs |
 | **CIM-Graph** | 34.55 s | 3037.3 MB | 2.1-6.3 s | 7561 lines, 1347 gen, 6687 loads, 4875 subs |
 | **RDFlib** | 34.76 s | 2765.0 MB | 371 μs-2.0 ms | 7561 lines, 1347 gen, 6687 loads, 4875 subs |
 
-⚠️ *pypowsybl converts some substations to voltage levels when connected by transformers, resulting in 84 fewer substations in RealGrid*
+*pypowsybl converts some substations to voltage levels when connected by transformers, resulting in 84 fewer substations in RealGrid*
 
 
 ### Import Performance Comparison
