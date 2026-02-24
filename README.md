@@ -97,12 +97,12 @@ See `tools/*/README.md` for detailed per-tool documentation and analysis.
 | ✅ | **triplets** | Python | Pandas-based RDF parser | Yes (DataFrame triplets) | Version-agnostic CIM/CGMES | [triplets](https://github.com/Haigutus/triplets) | Fast loading, low memory, simple API |
 | ✅ | **pypowsybl** | Python | PowSyBl wrapper (network import/export) | Indirect (via network objects) | CGMES 2.4.15/3.0 CGMES import/export | [powsybl/pypowsybl](https://github.com/powsybl/pypowsybl) | Grid-analysis oriented; rich network model |
 | ✅ | **GridCal/VeraGrid** | Python | Power systems analysis with UI | Indirect (CGMES circuit model) | CGMES 2.4.15/3.0 import | [SanPen/GridCal](https://github.com/SanPen/GridCal) | Sub-microsecond queries, full circuit model |
-| 📋 | **CIMantic Graphs** | Python | In-memory labeled property graph | Yes (strong, knowledge graph API) | CIM15–18, custom profiles | [PNNL-CIM-Tools/CIM-Graph](https://github.com/PNNL-CIM-Tools/CIM-Graph) | Modern API, SPARQL-like queries |
+| ✅ | **RDFlib** | Python | Generic RDF parser/triple store | Excellent (native triples) | None (generic) | [RDFLib/rdflib](https://github.com/RDFLib/rdflib) | Baseline for speed/memory comparison with Oxigraph |
+| ✅ | **CIMantic Graphs** | Python | In-memory labeled property graph | Yes (strong, knowledge graph API) | CIM15–18, custom profiles | [PNNL-CIM-Tools/CIM-Graph](https://github.com/PNNL-CIM-Tools/CIM-Graph) | Modern API, uses RDFlib with typed CIM objects |
 | 📋 | **cimpy** | Python | Import/export/modify CGMES XML/RDF | Yes (via RDFlib backend) | CGMES / IEC61970 focused | [sogno-platform/cimpy](https://github.com/sogno-platform/cimpy) | Battle-tested in European projects |
 | 📋 | **libcimpp** | C++ | Fast serialize/deserialize CIM XML/RDF | Partial (object model) | CGMES / IEC61970/61968/62325 | [sogno-platform/libcimpp](https://github.com/sogno-platform/libcimpp) | Likely fastest/lowest memory |
 | 📋 | **pycgmes** | Python | Dataclasses + RDF schema + SHACL | Yes (dataclass mapping) | CGMES 3.0+ | [alliander-opensource/pycgmes](https://github.com/alliander-opensource/pycgmes) | Strong SHACL validation |
 | 📋 | **OpenCGMES** | Java | Suite for CGMES / CIM RDF parser | Yes (CIMXML parser) | CGMES / IEC61970-552 | [SOPTIM/OpenCGMES](https://github.com/SOPTIM/OpenCGMES) | Recent CIMXML-specific fixes |
-| 📋 | **rdflib** | Python | Generic RDF parser/triple store | Excellent (native triples) | None (generic) | [RDFLib/rdflib](https://github.com/RDFLib/rdflib) | Baseline for speed/memory comparison |
 | 📋 | **Apache Jena** | Java | RDF framework + CIMXML parser | Excellent | Potential via custom parser | [apache/jena](https://github.com/apache/jena) | Generic + 2025 CIMXML branch |
 | 📋 | **CIMverter** | Java/C++ | Convert CIM RDF to Modelica | Partial | CGMES compatible | [cim-iec/cimverter](https://github.com/cim-iec/cimverter) | Round-trip fidelity testing |
 | 📋 | **CIMDraw** | Web/JS | View/edit CGMES node-breaker models | Indirect | ENTSO-E CGMES profile | [danielePala/CIMDraw](https://github.com/danielePala/CIMDraw) | Visual completeness check |
@@ -170,16 +170,16 @@ Graphs showing all three parsers across both datasets for each metric:
 **Graph Layout**:
 - Separate horizontal subplots per dataset (Svedala top, RealGrid bottom)
 - Within each dataset, parsers sorted from fastest/smallest to slowest/largest
-- Consistent x-axis scales across subplots for easy absolute comparison
-- Tab10 color palette: triplets (blue), pypowsybl (orange), VeraGrid (green)
+- Consistent x-axis scales across subplots for easy absolute comparison (log scale for query performance)
+- Color palette: triplets (blue), pypowsybl (orange), VeraGrid (green), RDFlib (yellow), CIM-Graph (purple)
 
 **Metrics visualized**:
 - Import/load time (ms)
 - Memory usage (MB)
-- Query performance (ms)
+- Query performance (ms, log scale)
 - Network elements parsed (lines, generators, loads, substations)
 
-*All graphs are generated in SVG format for scalability and web compatibility*
+*All graphs are generated in SVG format for scalability and web compatibility. Query performance graphs use logarithmic scale to show differences between fast parsers while keeping slower ones visible.*
 
 ### 🔧 Planned Infrastructure Changes
 
@@ -287,8 +287,18 @@ uv sync --extra visualization
 ./run_benchmarks.sh --quick
 ```
 
+**Skip benchmarks with existing results:**
+```bash
+./run_benchmarks.sh --skip-existing
+```
+
+**Combine flags:**
+```bash
+./run_benchmarks.sh --quick --skip-existing
+```
+
 This will:
-1. Run all configured benchmarks
+1. Run all configured benchmarks (or skip those with existing JSON results if `--skip-existing` is used)
 2. Save JSON results to `results/`
 3. Generate individual markdown reports
 4. Create a comparison summary report
