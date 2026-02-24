@@ -3,10 +3,11 @@
 # Run all CIM-bench benchmarks and generate reports
 #
 # Usage:
-#   ./run_benchmarks.sh [--quick]
+#   ./run_benchmarks.sh [--quick] [--skip-existing]
 #
 # Options:
-#   --quick    Run minimal rounds for faster iteration
+#   --quick           Run minimal rounds for faster iteration
+#   --skip-existing   Skip benchmarks if JSON results already exist
 #
 
 set -e
@@ -16,12 +17,21 @@ cd "$SCRIPT_DIR"
 
 RESULTS_DIR="results"
 BENCHMARK_OPTS=""
+SKIP_EXISTING=false
 
 # Parse arguments
-if [[ "$1" == "--quick" ]]; then
-    BENCHMARK_OPTS="--benchmark-min-rounds=3"
-    echo "Running in quick mode (minimal rounds)"
-fi
+for arg in "$@"; do
+    case "$arg" in
+        --quick)
+            BENCHMARK_OPTS="--benchmark-min-rounds=3"
+            echo "Running in quick mode (minimal rounds)"
+            ;;
+        --skip-existing)
+            SKIP_EXISTING=true
+            echo "Skip mode enabled (existing results will be reused)"
+            ;;
+    esac
+done
 
 # Create results directory
 mkdir -p "$RESULTS_DIR"
@@ -48,6 +58,12 @@ for test_file in "${BENCHMARK_FILES[@]}"; do
 
     # Extract basename for output file
     output_json="$RESULTS_DIR/${basename%.py}.json"
+
+    # Skip if results already exist and --skip-existing flag is set
+    if [[ "$SKIP_EXISTING" == true && -f "$output_json" ]]; then
+        echo "⏭️  Skipping ${basename} (results exist)"
+        continue
+    fi
 
     echo "📊 Running ${basename}..."
     uv run pytest "$test_file" \

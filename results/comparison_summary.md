@@ -13,242 +13,394 @@
 
 | Library | Load Time (mean) | Memory (MB) | Elements | Notes |
 |---------|------------------|-------------|----------|-------|
-| pypowsybl (Realgrid) | 4.33 s | 4559.9 MB | 7561 lines, 1347 gen, 6687 loads | Dataset: 86.5 MB |
-| pypowsybl (Svedala) | 423.2 ms | 1021.9 MB | 97 lines, 39 gen, 73 loads | Dataset: 7.3 MB |
-| triplets (Realgrid) | 1.37 s | 516.5 MB | 7561 lines, 1347 gen, 6687 loads | Dataset: 86.5 MB |
-| triplets (Svedala) | 116.6 ms | 60.8 MB | 97 lines, 39 gen, 73 loads | Dataset: 7.3 MB |
-| veragrid (Realgrid) | 16.88 s | 2657.0 MB | 7561 lines, 1347 gen, 6687 loads | Dataset: 86.5 MB |
-| veragrid (Svedala) | 1.41 s | 617.6 MB | 97 lines, 39 gen, 73 loads | Dataset: 7.3 MB |
+| cimgraph (Realgrid) | 34.55 s | 3037.3 MB | 7561 lines, 1347 gen, 6687 loads | Dataset: 86.5 MB |
+| cimgraph (Svedala) | 1.66 s | 277.1 MB | 97 lines, 39 gen, 73 loads | Dataset: 7.3 MB |
+| pypowsybl (Realgrid) | 4.85 s | 4433.3 MB | 7561 lines, 1347 gen, 6687 loads | Dataset: 86.5 MB |
+| pypowsybl (Svedala) | 477.4 ms | 944.1 MB | 97 lines, 39 gen, 73 loads | Dataset: 7.3 MB |
+| rdflib (Realgrid) | 34.76 s | 2765.0 MB | 7561 lines, 1347 gen, 6687 loads | Dataset: 86.5 MB |
+| rdflib (Svedala) | 1.70 s | 263.5 MB | 97 lines, 39 gen, 73 loads | Dataset: 7.3 MB |
+| triplets (Realgrid) | 1.56 s | 515.6 MB | 7561 lines, 1347 gen, 6687 loads | Dataset: 86.5 MB |
+| triplets (Svedala) | 137.6 ms | 62.8 MB | 97 lines, 39 gen, 73 loads | Dataset: 7.3 MB |
+| veragrid (Realgrid) | 17.84 s | 2681.1 MB | 7561 lines, 1347 gen, 6687 loads | Dataset: 86.5 MB |
+| veragrid (Svedala) | 1.50 s | 615.4 MB | 97 lines, 39 gen, 73 loads | Dataset: 7.3 MB |
 
 ### Query Performance
 
-| Query Type | pypowsybl (Realgrid) | pypowsybl (Svedala) | triplets (Realgrid) | triplets (Svedala) | veragrid (Realgrid) | veragrid (Svedala) |
-|------------|---|---|---|---|---|---|
-| get_generators | 2.7 ms | 319.7 μs | 12.8 ms | 1.7 ms | 0.0 μs | 0.0 μs |
-| get_lines | 35.6 ms | 332.3 μs | 13.6 ms | 1.6 ms | 0.0 μs | 0.0 μs |
-| get_loads | 22.3 ms | 225.7 μs | 38.0 ms | 4.9 ms | 0.1 μs | 0.1 μs |
-| get_substations | 7.2 ms | 159.1 μs | 13.3 ms | 1.6 ms | 0.0 μs | 0.0 μs |
+| Query Type | cimgraph (Realgrid) | cimgraph (Svedala) | pypowsybl (Realgrid) | pypowsybl (Svedala) | rdflib (Realgrid) | rdflib (Svedala) | triplets (Realgrid) | triplets (Svedala) | veragrid (Realgrid) | veragrid (Svedala) |
+|------------|---|---|---|---|---|---|---|---|---|---|
+| get_generators | 2.14 s | 110.3 ms | 3.1 ms | 383.5 μs | 370.6 μs | 57.2 μs | 17.7 ms | 2.0 ms | 0.0 μs | 0.1 μs |
+| get_lines | 2.13 s | 113.4 ms | 35.3 ms | 404.5 μs | 2.0 ms | 70.3 μs | 19.5 ms | 1.9 ms | 0.0 μs | 0.0 μs |
+| get_loads | 6.34 s | 333.8 ms | 18.6 ms | 275.3 μs | 1.8 ms | 159.6 μs | 52.9 ms | 5.7 ms | 0.1 μs | 0.1 μs |
+| get_substations | 2.12 s | 108.1 ms | 4.8 ms | 198.6 μs | 1.2 ms | 60.2 μs | 17.6 ms | 1.9 ms | 0.0 μs | 0.0 μs |
 
 ## Detailed Results
+
+### cimgraph (Realgrid)
+
+#### Cimgraph Load Realgrid
+
+- **Mean**: 34.55 s
+- **Min**: 33.26 s
+- **Max**: 36.41 s
+- **Rounds**: 5
+
+#### Cimgraph Get Lines
+
+- **Mean**: 2.13 s
+- **Min**: 2.11 s
+- **Max**: 2.15 s
+- **Rounds**: 5
+
+#### Cimgraph Get Generators
+
+- **Mean**: 2.14 s
+- **Min**: 2.10 s
+- **Max**: 2.21 s
+- **Rounds**: 5
+
+#### Cimgraph Get Loads
+
+- **Mean**: 6.34 s
+- **Min**: 6.28 s
+- **Max**: 6.43 s
+- **Rounds**: 5
+
+#### Cimgraph Get Substations
+
+- **Mean**: 2.12 s
+- **Min**: 2.10 s
+- **Max**: 2.13 s
+- **Rounds**: 5
+
+### cimgraph (Svedala)
+
+#### Cimgraph Load Svedala
+
+- **Mean**: 1.66 s
+- **Min**: 1.60 s
+- **Max**: 1.77 s
+- **Rounds**: 5
+
+#### Cimgraph Get Lines
+
+- **Mean**: 113.4 ms
+- **Min**: 109.1 ms
+- **Max**: 128.4 ms
+- **Rounds**: 9
+
+#### Cimgraph Get Generators
+
+- **Mean**: 110.3 ms
+- **Min**: 108.3 ms
+- **Max**: 113.1 ms
+- **Rounds**: 9
+
+#### Cimgraph Get Loads
+
+- **Mean**: 333.8 ms
+- **Min**: 325.1 ms
+- **Max**: 343.5 ms
+- **Rounds**: 5
+
+#### Cimgraph Get Substations
+
+- **Mean**: 108.1 ms
+- **Min**: 106.9 ms
+- **Max**: 111.5 ms
+- **Rounds**: 9
 
 ### pypowsybl (Realgrid)
 
 #### Pypowsybl Load Realgrid
 
-- **Mean**: 4.33 s
-- **Min**: 4.24 s
-- **Max**: 4.47 s
+- **Mean**: 4.85 s
+- **Min**: 4.72 s
+- **Max**: 5.03 s
 - **Rounds**: 5
 
 #### Pypowsybl Get Lines
 
-- **Mean**: 35.6 ms
-- **Min**: 33.9 ms
-- **Max**: 39.3 ms
+- **Mean**: 35.3 ms
+- **Min**: 34.4 ms
+- **Max**: 36.2 ms
 - **Rounds**: 28
 
 #### Pypowsybl Get Generators
 
-- **Mean**: 2.7 ms
-- **Min**: 2.5 ms
-- **Max**: 4.9 ms
-- **Rounds**: 151
+- **Mean**: 3.1 ms
+- **Min**: 2.8 ms
+- **Max**: 18.0 ms
+- **Rounds**: 193
 
 #### Pypowsybl Get Loads
 
-- **Mean**: 22.3 ms
-- **Min**: 19.0 ms
-- **Max**: 32.5 ms
-- **Rounds**: 45
+- **Mean**: 18.6 ms
+- **Min**: 17.9 ms
+- **Max**: 22.1 ms
+- **Rounds**: 43
 
 #### Pypowsybl Get Substations
 
-- **Mean**: 7.2 ms
-- **Min**: 3.7 ms
-- **Max**: 64.4 ms
-- **Rounds**: 131
+- **Mean**: 4.8 ms
+- **Min**: 4.2 ms
+- **Max**: 13.9 ms
+- **Rounds**: 106
 
 ### pypowsybl (Svedala)
 
 #### Pypowsybl Load Svedala
 
-- **Mean**: 423.2 ms
-- **Min**: 409.5 ms
-- **Max**: 439.2 ms
+- **Mean**: 477.4 ms
+- **Min**: 455.7 ms
+- **Max**: 501.6 ms
 - **Rounds**: 5
 
 #### Pypowsybl Get Lines
 
-- **Mean**: 332.3 μs
-- **Min**: 317.8 μs
-- **Max**: 3.0 ms
-- **Rounds**: 1025
+- **Mean**: 404.5 μs
+- **Min**: 383.1 μs
+- **Max**: 4.4 ms
+- **Rounds**: 929
 
 #### Pypowsybl Get Generators
 
-- **Mean**: 319.7 μs
-- **Min**: 304.1 μs
-- **Max**: 667.1 μs
-- **Rounds**: 1604
+- **Mean**: 383.5 μs
+- **Min**: 360.1 μs
+- **Max**: 640.0 μs
+- **Rounds**: 1220
 
 #### Pypowsybl Get Loads
 
-- **Mean**: 225.7 μs
-- **Min**: 216.8 μs
-- **Max**: 404.9 μs
-- **Rounds**: 1840
+- **Mean**: 275.3 μs
+- **Min**: 259.2 μs
+- **Max**: 468.6 μs
+- **Rounds**: 1646
 
 #### Pypowsybl Get Substations
 
-- **Mean**: 159.1 μs
-- **Min**: 148.7 μs
-- **Max**: 516.2 μs
-- **Rounds**: 2361
+- **Mean**: 198.6 μs
+- **Min**: 186.4 μs
+- **Max**: 370.8 μs
+- **Rounds**: 2443
+
+### rdflib (Realgrid)
+
+#### Rdflib Load Realgrid
+
+- **Mean**: 34.76 s
+- **Min**: 33.29 s
+- **Max**: 36.39 s
+- **Rounds**: 5
+
+#### Rdflib Get Lines
+
+- **Mean**: 2.0 ms
+- **Min**: 1.9 ms
+- **Max**: 2.7 ms
+- **Rounds**: 329
+
+#### Rdflib Get Generators
+
+- **Mean**: 370.6 μs
+- **Min**: 358.9 μs
+- **Max**: 641.6 μs
+- **Rounds**: 1257
+
+#### Rdflib Get Loads
+
+- **Mean**: 1.8 ms
+- **Min**: 1.7 ms
+- **Max**: 4.9 ms
+- **Rounds**: 293
+
+#### Rdflib Get Substations
+
+- **Mean**: 1.2 ms
+- **Min**: 1.2 ms
+- **Max**: 1.8 ms
+- **Rounds**: 418
+
+### rdflib (Svedala)
+
+#### Rdflib Load Svedala
+
+- **Mean**: 1.70 s
+- **Min**: 1.60 s
+- **Max**: 1.84 s
+- **Rounds**: 5
+
+#### Rdflib Get Lines
+
+- **Mean**: 70.3 μs
+- **Min**: 68.2 μs
+- **Max**: 578.8 μs
+- **Rounds**: 4568
+
+#### Rdflib Get Generators
+
+- **Mean**: 57.2 μs
+- **Min**: 55.0 μs
+- **Max**: 444.3 μs
+- **Rounds**: 7097
+
+#### Rdflib Get Loads
+
+- **Mean**: 159.6 μs
+- **Min**: 154.2 μs
+- **Max**: 693.6 μs
+- **Rounds**: 3563
+
+#### Rdflib Get Substations
+
+- **Mean**: 60.2 μs
+- **Min**: 58.1 μs
+- **Max**: 719.7 μs
+- **Rounds**: 6686
 
 ### triplets (Realgrid)
 
 #### Triplets Load Realgrid
 
-- **Mean**: 1.37 s
-- **Min**: 1.37 s
-- **Max**: 1.37 s
+- **Mean**: 1.56 s
+- **Min**: 1.55 s
+- **Max**: 1.56 s
 - **Rounds**: 5
 
 #### Triplets Get Lines
 
-- **Mean**: 13.6 ms
-- **Min**: 13.3 ms
-- **Max**: 16.0 ms
-- **Rounds**: 68
+- **Mean**: 19.5 ms
+- **Min**: 18.2 ms
+- **Max**: 24.3 ms
+- **Rounds**: 59
 
 #### Triplets Get Generators
 
-- **Mean**: 12.8 ms
-- **Min**: 12.6 ms
-- **Max**: 13.5 ms
-- **Rounds**: 70
+- **Mean**: 17.7 ms
+- **Min**: 16.4 ms
+- **Max**: 34.3 ms
+- **Rounds**: 52
 
 #### Triplets Get Loads
 
-- **Mean**: 38.0 ms
-- **Min**: 37.5 ms
-- **Max**: 39.6 ms
-- **Rounds**: 26
+- **Mean**: 52.9 ms
+- **Min**: 49.1 ms
+- **Max**: 77.8 ms
+- **Rounds**: 20
 
 #### Triplets Get Substations
 
-- **Mean**: 13.3 ms
-- **Min**: 12.4 ms
-- **Max**: 26.6 ms
-- **Rounds**: 73
+- **Mean**: 17.6 ms
+- **Min**: 16.3 ms
+- **Max**: 26.1 ms
+- **Rounds**: 48
 
 ### triplets (Svedala)
 
 #### Triplets Load Svedala
 
-- **Mean**: 116.6 ms
-- **Min**: 112.0 ms
-- **Max**: 137.7 ms
-- **Rounds**: 9
+- **Mean**: 137.6 ms
+- **Min**: 129.1 ms
+- **Max**: 161.0 ms
+- **Rounds**: 8
 
 #### Triplets Get Lines
 
-- **Mean**: 1.6 ms
-- **Min**: 1.6 ms
-- **Max**: 1.9 ms
-- **Rounds**: 387
+- **Mean**: 1.9 ms
+- **Min**: 1.8 ms
+- **Max**: 2.5 ms
+- **Rounds**: 361
 
 #### Triplets Get Generators
 
-- **Mean**: 1.7 ms
-- **Min**: 1.6 ms
-- **Max**: 2.5 ms
-- **Rounds**: 532
+- **Mean**: 2.0 ms
+- **Min**: 1.8 ms
+- **Max**: 6.3 ms
+- **Rounds**: 459
 
 #### Triplets Get Loads
 
-- **Mean**: 4.9 ms
-- **Min**: 4.7 ms
-- **Max**: 5.8 ms
-- **Rounds**: 196
+- **Mean**: 5.7 ms
+- **Min**: 5.5 ms
+- **Max**: 9.8 ms
+- **Rounds**: 159
 
 #### Triplets Get Substations
 
-- **Mean**: 1.6 ms
-- **Min**: 1.6 ms
-- **Max**: 2.0 ms
-- **Rounds**: 578
+- **Mean**: 1.9 ms
+- **Min**: 1.8 ms
+- **Max**: 3.2 ms
+- **Rounds**: 472
 
 ### veragrid (Realgrid)
 
 #### Veragrid Load Realgrid
 
-- **Mean**: 16.88 s
-- **Min**: 15.14 s
-- **Max**: 18.65 s
+- **Mean**: 17.84 s
+- **Min**: 16.27 s
+- **Max**: 19.83 s
 - **Rounds**: 5
 
 #### Veragrid Get Lines
 
 - **Mean**: 0.0 μs
 - **Min**: 0.0 μs
-- **Max**: 0.9 μs
-- **Rounds**: 199641
+- **Max**: 0.7 μs
+- **Rounds**: 103542
 
 #### Veragrid Get Generators
 
 - **Mean**: 0.0 μs
 - **Min**: 0.0 μs
-- **Max**: 0.8 μs
-- **Rounds**: 122026
+- **Max**: 0.7 μs
+- **Rounds**: 106519
 
 #### Veragrid Get Loads
 
 - **Mean**: 0.1 μs
 - **Min**: 0.1 μs
-- **Max**: 0.7 μs
-- **Rounds**: 70642
+- **Max**: 172.9 μs
+- **Rounds**: 182816
 
 #### Veragrid Get Substations
 
 - **Mean**: 0.0 μs
 - **Min**: 0.0 μs
-- **Max**: 0.7 μs
-- **Rounds**: 121729
+- **Max**: 1.0 μs
+- **Rounds**: 106304
 
 ### veragrid (Svedala)
 
 #### Veragrid Load Svedala
 
-- **Mean**: 1.41 s
-- **Min**: 1.08 s
-- **Max**: 1.67 s
+- **Mean**: 1.50 s
+- **Min**: 1.17 s
+- **Max**: 1.74 s
 - **Rounds**: 5
 
 #### Veragrid Get Lines
 
 - **Mean**: 0.0 μs
 - **Min**: 0.0 μs
-- **Max**: 0.2 μs
-- **Rounds**: 197668
+- **Max**: 0.7 μs
+- **Rounds**: 115248
 
 #### Veragrid Get Generators
 
-- **Mean**: 0.0 μs
-- **Min**: 0.0 μs
-- **Max**: 0.9 μs
-- **Rounds**: 199641
+- **Mean**: 0.1 μs
+- **Min**: 0.1 μs
+- **Max**: 5.9 μs
+- **Rounds**: 168578
 
 #### Veragrid Get Loads
 
 - **Mean**: 0.1 μs
 - **Min**: 0.1 μs
-- **Max**: 0.7 μs
-- **Rounds**: 90327
+- **Max**: 7.4 μs
+- **Rounds**: 187970
 
 #### Veragrid Get Substations
 
 - **Mean**: 0.0 μs
 - **Min**: 0.0 μs
-- **Max**: 0.6 μs
-- **Rounds**: 133441
+- **Max**: 0.9 μs
+- **Rounds**: 116605

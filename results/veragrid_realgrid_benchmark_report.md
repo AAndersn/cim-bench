@@ -13,14 +13,14 @@
 
 ### Veragrid Load Realgrid
 
-- **Mean time**: 16.88 s
-- **Min time**: 15.14 s
-- **Max time**: 18.65 s
-- **Std dev**: 1.25 s
+- **Mean time**: 17.84 s
+- **Min time**: 16.27 s
+- **Max time**: 19.83 s
+- **Std dev**: 1.29 s
 - **Rounds**: 5
 
 **Metrics**:
-- Memory Mb: 2657.0
+- Memory Mb: 2681.1
 - Lines: 7561
 - Generators: 1347
 - Loads: 6687
@@ -36,9 +36,9 @@
 
 - **Mean time**: 0.0 μs
 - **Min time**: 0.0 μs
-- **Max time**: 0.9 μs
+- **Max time**: 0.7 μs
 - **Std dev**: 0.0 μs
-- **Rounds**: 199641
+- **Rounds**: 103542
 
 **Metrics**:
 - Line Count: 7561
@@ -52,9 +52,9 @@
 
 - **Mean time**: 0.0 μs
 - **Min time**: 0.0 μs
-- **Max time**: 0.8 μs
+- **Max time**: 0.7 μs
 - **Std dev**: 0.0 μs
-- **Rounds**: 122026
+- **Rounds**: 106519
 
 **Metrics**:
 - Generator Count: 1347
@@ -68,9 +68,9 @@
 
 - **Mean time**: 0.1 μs
 - **Min time**: 0.1 μs
-- **Max time**: 0.7 μs
-- **Std dev**: 0.0 μs
-- **Rounds**: 70642
+- **Max time**: 172.9 μs
+- **Std dev**: 0.4 μs
+- **Rounds**: 182816
 
 **Metrics**:
 - Load Count: 6687
@@ -84,9 +84,9 @@
 
 - **Mean time**: 0.0 μs
 - **Min time**: 0.0 μs
-- **Max time**: 0.7 μs
+- **Max time**: 1.0 μs
 - **Std dev**: 0.0 μs
-- **Rounds**: 121729
+- **Rounds**: 106304
 
 **Metrics**:
 - Substation Count: 4875

@@ -74,11 +74,13 @@ def plot_dataset(dataset_name, tools_data, output_dir):
 
     query_times = [np.mean(tools_data[t].get("queries", [0])) for t in tools]
     ax3.bar(tools, query_times, color=colors)
-    ax3.set_ylabel('Average Query Time (ms)', fontsize=11)
+    ax3.set_ylabel('Average Query Time (ms, log scale)', fontsize=11)
     ax3.set_title(f'{dataset_name} - Query Performance', fontsize=12, fontweight='bold')
-    ax3.grid(axis='y', alpha=0.3)
+    ax3.set_yscale('log')
+    ax3.grid(axis='y', alpha=0.3, which='both')
     for i, v in enumerate(query_times):
-        ax3.text(i, v, f'{v:.2f} ms', ha='center', va='bottom', fontsize=9)
+        if v > 0:
+            ax3.text(i, v, f'{v:.2f} ms', ha='center', va='bottom', fontsize=9)
 
     plt.tight_layout()
     plt.savefig(output_dir / f"{dataset_name.lower()}_comparison.svg", format='svg', bbox_inches='tight')
@@ -231,13 +233,6 @@ def plot_cross_dataset(data, output_dir):
     if len(datasets) == 1:
         axes = [axes]
 
-    # Find max value across all datasets for consistent scale
-    max_query = max(
-        np.mean(data[ds].get(tool, {}).get("queries", [0]))
-        for ds in datasets
-        for tool in tools
-    )
-
     for idx, ds in enumerate(datasets):
         ax = axes[idx]
         ds_label = f"{ds.capitalize()} (7.3 MB)" if ds == 'svedala' else f"{ds.capitalize()} (86.5 MB)"
@@ -254,10 +249,10 @@ def plot_cross_dataset(data, output_dir):
         bar_colors = [e[2] for e in entries]
 
         bars = ax.barh(labels, values, color=bar_colors)
-        ax.set_xlabel('Average Query Time (ms)', fontsize=12)
+        ax.set_xlabel('Average Query Time (ms, log scale)', fontsize=12)
         ax.set_title(ds_label, fontsize=12, fontweight='bold')
-        ax.set_xlim(0, max_query * 1.15)
-        ax.grid(axis='x', alpha=0.3)
+        ax.set_xscale('log')
+        ax.grid(axis='x', alpha=0.3, which='both')
 
         for i, (bar, val) in enumerate(zip(bars, values)):
             ax.text(val, i, f' {val:.3f} ms', va='center', fontsize=10)
