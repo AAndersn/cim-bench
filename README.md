@@ -99,9 +99,9 @@ See `tools/*/README.md` for detailed per-tool documentation and analysis.
 | ✅ | **GridCal/VeraGrid** | Python | Power systems analysis with UI | Indirect (CGMES circuit model) | CGMES 2.4.15/3.0 import | [SanPen/GridCal](https://github.com/SanPen/GridCal) | Sub-microsecond queries, full circuit model |
 | ✅ | **RDFlib** | Python | Generic RDF parser/triple store | Excellent (native triples) | None (generic) | [RDFLib/rdflib](https://github.com/RDFLib/rdflib) | Baseline for speed/memory comparison with Oxigraph |
 | ✅ | **CIMantic Graphs** | Python | In-memory labeled property graph | Yes (strong, knowledge graph API) | CIM15–18, custom profiles | [PNNL-CIM-Tools/CIM-Graph](https://github.com/PNNL-CIM-Tools/CIM-Graph) | Modern API, uses RDFlib with typed CIM objects |
-| 📋 | **cimpy** | Python | Import/export/modify CGMES XML/RDF | Yes (via RDFlib backend) | CGMES / IEC61970 focused | [sogno-platform/cimpy](https://github.com/sogno-platform/cimpy) | Battle-tested in European projects |
+| ⚠️ | **cimpy** | Python | Import/export/modify CGMES XML/RDF | Yes (via object topology dict) | CGMES 2.4.15 (partial) | [sogno-platform/cimpy](https://github.com/sogno-platform/cimpy) | Compatibility issues: v1.1.0 only has cgmes_v2_4_15 classes (no CGMES 3.0), parsing bugs with test datasets |
+| ❌ | **pycgmes** | Python | Dataclasses + RDF schema + SHACL | Yes (dataclass mapping) | CGMES 3.0+ | [alliander-opensource/pycgmes](https://github.com/alliander-opensource/pycgmes) | No file import capability - dataclass definitions only |
 | 📋 | **libcimpp** | C++ | Fast serialize/deserialize CIM XML/RDF | Partial (object model) | CGMES / IEC61970/61968/62325 | [sogno-platform/libcimpp](https://github.com/sogno-platform/libcimpp) | Likely fastest/lowest memory |
-| 📋 | **pycgmes** | Python | Dataclasses + RDF schema + SHACL | Yes (dataclass mapping) | CGMES 3.0+ | [alliander-opensource/pycgmes](https://github.com/alliander-opensource/pycgmes) | Strong SHACL validation |
 | 📋 | **OpenCGMES** | Java | Suite for CGMES / CIM RDF parser | Yes (CIMXML parser) | CGMES / IEC61970-552 | [SOPTIM/OpenCGMES](https://github.com/SOPTIM/OpenCGMES) | Recent CIMXML-specific fixes |
 | 📋 | **Apache Jena** | Java | RDF framework + CIMXML parser | Excellent | Potential via custom parser | [apache/jena](https://github.com/apache/jena) | Generic + 2025 CIMXML branch |
 | 📋 | **CIMverter** | Java/C++ | Convert CIM RDF to Modelica | Partial | CGMES compatible | [cim-iec/cimverter](https://github.com/cim-iec/cimverter) | Round-trip fidelity testing |
@@ -112,6 +112,8 @@ See `tools/*/README.md` for detailed per-tool documentation and analysis.
 
 **Legend:**
 - ✅ Benchmarked
+- ⚠️ Compatibility issues found
+- ❌ Not suitable for import benchmarking
 - 📋 Planned
 
 ### 📊 Additional Benchmarks
