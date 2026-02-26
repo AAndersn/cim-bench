@@ -10,6 +10,7 @@ import importlib
 import tempfile
 import zipfile
 from pathlib import Path
+from dataclasses import fields
 
 from cimgraph.databases import XMLFile
 from cimgraph.models import NodeBreakerModel
@@ -41,30 +42,33 @@ class CIMGraphAdapter(ParserAdapter):
 
         # Detect CIM profile and parameters for this dataset
         self.cim_profile = self._get_cim_profile(dataset_key)
-        os.environ['CIMG_VALIDATION_LOG_LEVEL'] = 'DEBUG'
+        # os.environ['CIMG_VALIDATION_LOG_LEVEL'] = 'DEBUG'
         os.environ['CIMG_CIM_PROFILE'] = self.cim_profile
-        os.environ['CIMG_NAMESPACE'] = self._get_namespace(dataset_key)
-        os.environ['CIMG_IEC61970_301'] = self._get_iec_version(dataset_key)
+        os.environ['CIMG_NAMESPACE'] = str(self._get_namespace(dataset_key))
+        os.environ['CIMG_IEC61970_301'] = str(self._get_iec_version(dataset_key))
+        
+        print('DATASET NAME:', dataset)
 
         if "ZIP" in dataset:
             # Single ZIP file (RealGrid) - extract and load EQ files
-            with tempfile.TemporaryDirectory() as tmpdir:
-                with zipfile.ZipFile(dataset["ZIP"], 'r') as zf:
-                    zf.extractall(tmpdir)
-                    # Parse EQ (Equipment) files only for canonical counts
-                    eq_files = list(Path(tmpdir).rglob("*_EQ_*.xml"))
-                    eq_files.extend(Path(tmpdir).rglob("*_EQ.xml"))
-                    eq_files.extend(Path(tmpdir).rglob("*EQ.xml"))
-                    
-                    xml_file_set = set(eq_files)
+            # with tempfile.TemporaryDirectory() as tmpdir:
+            tmpdir = './tmpdir'
+            with zipfile.ZipFile(dataset["ZIP"], 'r') as zf:
+                zf.extractall(tmpdir)
+                # Parse EQ (Equipment) files only for canonical counts
+                eq_files = list(Path(tmpdir).rglob("*_EQ_*.xml"))
+                eq_files.extend(Path(tmpdir).rglob("*_EQ.xml"))
+                eq_files.extend(Path(tmpdir).rglob("*EQ.xml"))
+                
+                xml_file_set = eq_files
         else:
             # Multiple files (Svedala) - load EQ file only
             if "EQ" in dataset:
-                xml_file_set = set(dataset["EQ"])
+                xml_file_set = [dataset["EQ"]]
             else:
                 # Fallback: load all files if no EQ file specified
                 files = [v for k, v in dataset.items() if k != "_metadata"]
-                xml_file_set = set(files)
+                xml_file_set = files
 
         # Load CIM profile module for typed access
         self.cim = importlib.import_module(f'cimgraph.data_profile.{self.cim_profile}')
@@ -119,30 +123,40 @@ class CIMGraphAdapter(ParserAdapter):
         """Extract metrics from CIM-Graph connection."""
         return {
             "memory_mb": f"{memory_mb:.1f}",
-            "triples": None,
-            "lines": len(self.network.list_by_class(self.cim.ACLineSegment)),
-            "generators": len(self.network.list_by_class(self.cim.SynchronousMachine)),
-            "loads": len(self.network.list_by_class(self.cim.EnergyConsumer)),
-            "substations": len(self.network.list_by_class(self.cim.Substation)),
+            "triples": self.count_triples(),
+            "lines": len(self.network.graph[self.cim.ACLineSegment]),
+            "generators": len(self.network.graph[self.cim.SynchronousMachine]),
+            "loads": len(self.network.graph[self.cim.EnergyConsumer]),
+            "substations": len(self.network.graph[self.cim.Substation]),
         }
 
     def get_lines_count(self, loaded_obj):
         """Get all lines (ACLineSegments) in the network."""
-        return len(self.network.list_by_class(self.cim.ACLineSegment))
+        return len(self.network.graph[self.cim.ACLineSegment])
 
     def get_generators_count(self, loaded_obj):
         """Get all generators (SynchronousMachines) in the network."""
-        return len(self.network.list_by_class(self.cim.SynchronousMachine))
+        return len(self.network.graph[self.cim.SynchronousMachine])
 
     def get_loads_count(self, loaded_obj):
         """Get all loads (ConformLoad + NonConformLoad + EnergyConsumer) in the network."""
-        conform = len(self.network.list_by_class(self.cim.ConformLoad))
-        nonconform = len(self.network.list_by_class(self.cim.NonConformLoad))
-        energy_consumer = len(self.network.list_by_class(self.cim.EnergyConsumer))
+        conform = len(self.network.graph[self.cim.ConformLoad])
+        nonconform = len(self.network.graph[self.cim.NonConformLoad])
+        energy_consumer = len(self.network.graph[self.cim.EnergyConsumer])
         return conform + nonconform + energy_consumer
 
     def get_substations_count(self, loaded_obj):
         """Get all substations in the network."""
-        return len(self.network.list_by_class(self.cim.Substation))
+        return len(self.network.graph[self.cim.Substation])
     
 
+    def count_triples(self):
+        thing_count = 0
+        for cim_class in self.network.graph:
+            attrs = fields(cim_class)
+            for obj in self.network.graph[cim_class].values():
+                for field in attrs:
+                    value = getattr(obj, field.name)
+                    if value or value == 0:
+                        thing_count +=1
+        return thing_count
